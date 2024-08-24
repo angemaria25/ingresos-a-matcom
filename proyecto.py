@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-data = pd.read_json("datos\datos_clasificados.json")
+data = pd.read_json("./datos/datos_clasificados.json")
 
 # Eliminar espacios en blanco al principio y al final de los nombres de las columnas
 data.columns = data.columns.str.strip()
@@ -16,6 +16,29 @@ pd.set_option('display.expand_frame_repr', False)
 
 st.markdown("# Ingresos a la Facultad de Matemática y Computación.")
 
+#################################################################################
+st.write("### Comparación entre el total de inscripciones y bajas.")
+
+inscripciones = data.groupby('Curso').size().reset_index(name='Número de Inscripciones')
+bajas = data[data['Estado'] == 'Baja'].groupby('Curso').size().reset_index(name='Número de Bajas')
+
+datos_combinados = pd.merge(inscripciones, bajas, on=['Curso'], how='outer').fillna(0)
+
+datos_melted = datos_combinados.melt(id_vars='Curso', value_vars=['Número de Inscripciones', 'Número de Bajas'], var_name='Métrica', value_name='Número')
+
+fig = px.line(datos_melted, 
+                x='Curso', 
+                y='Número', 
+                color='Métrica', 
+                title='Comparación de Inscripciones y Bajas por Curso',
+                labels={'Número': 'Número', 'Métrica': 'Métrica', 'Curso': 'Curso'}, markers=True)
+fig.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig.update_layout(
+    xaxis=dict(showgrid=False),  
+    yaxis=dict(showgrid=False),
+    legend_title_text='Métricas'
+)
+st.plotly_chart(fig)
 #########################################################
 st.write("### Ingresos a MATCOM a lo largo del tiempo.")
 #########################################################
@@ -38,13 +61,16 @@ fig01.update_layout(
 if opcion_visualizacion == 'Inscripciones por Género':
     
     inscripciones_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Inscripciones')
+    
+    
     fig02 = px.bar(inscripciones_por_genero, 
                     x='Curso', 
                     y='Número de Inscripciones', 
                     color='Sexo', 
                     barmode='group',
                     title='Inscripciones por Género y Curso.',
-                    labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'})
+                    labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'},
+                    color_discrete_map={'F': 'pink', 'M': 'blue'})
     fig02.update_traces(marker=dict(line=dict(color='#000000', width=2)))
     fig02.update_layout(
         xaxis=dict(showgrid=False),  
@@ -105,7 +131,7 @@ else:
 ##############################################
 st.write("### Ingresos por Carrera y Curso.")
 ##############################################
-opcion_seleccionada = st.radio("Seleccione la opción deseada:",("Ingresos por Carrera y Curso.", "Distribución por Vía de Ingreso.", "Ingresos por Provincias."))
+opcion_seleccionada = st.radio("Seleccione la opción deseada:",("Ingresos por Carrera y Curso.", "Distribución por Vía de Ingreso."))
 
 if opcion_seleccionada == "Ingresos por Carrera y Curso.":
     st.write("### Inscripciones por Carrera y Curso a lo Largo de los Años.")
@@ -179,14 +205,21 @@ fig11.update_layout(
     legend_title_text='Cursos')
 
 if opcion_visualizacion == 'Bajas por Género':
+    
+    ingresos_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Total Ingresos')
     bajas_por_genero = bajas.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Bajas')
+    bajas_por_genero = bajas_por_genero.merge(ingresos_por_genero, on=['Curso', 'Sexo'])
+    
+    bajas_por_genero['Porcentaje de Bajas'] = (bajas_por_genero['Número de Bajas'] / bajas_por_genero['Total Ingresos']) * 100
+
     fig12 = px.bar(bajas_por_genero, 
                     x='Curso', 
-                    y='Número de Bajas', 
+                    y='Porcentaje de Bajas', 
                     color='Sexo', 
                     barmode='group',
-                    title='Bajas por Género y Curso.',
-                    labels={'Número de Bajas':'Número de Bajas', 'Curso':'Curso'})
+                    title='Porcentaje de Bajas por Género y Curso.',
+                    labels={'Porcentaje de Bajas':'Porcentaje de Bajas (%)', 'Curso':'Curso'},
+                    color_discrete_map={'F': 'pink', 'M': 'blue'})
     fig12.update_traces(marker=dict(line=dict(color='#000000', width=2)))
     fig12.update_layout(
         xaxis=dict(showgrid=False),  
@@ -315,3 +348,4 @@ st.write("### de que via de ingreso vienen los estudiantes de provincia")
 st.write("### Existe alguna correlación entre los estudiantes que piden la baja con la opcion??")
 st.write("### Cantidad de repitentes?de reingresos?")
 st.write("### Como ha variado el promedio del escalafón para el ingreso a las diferentes carreras a lo largo de los años??")
+st.write("### Que genero coje mas una carrera especifica y que genero la deja mas")
