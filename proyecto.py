@@ -61,8 +61,7 @@ fig01.update_layout(
 if opcion_visualizacion == 'Inscripciones por Género':
     
     inscripciones_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Inscripciones')
-    
-    
+
     fig02 = px.bar(inscripciones_por_genero, 
                     x='Curso', 
                     y='Número de Inscripciones', 
