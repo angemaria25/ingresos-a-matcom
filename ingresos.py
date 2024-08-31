@@ -1,6 +1,10 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import geopandas as gpd
+import folium
+from streamlit_folium import st_folium
+import matplotlib.pyplot as plt
 
 data = pd.read_json("./datos/datos_clasificados.json")
 
@@ -15,8 +19,9 @@ pd.set_option('display.max_colwidth', None)
 pd.set_option('display.expand_frame_repr', False)
 
 st.markdown("# Ingresos a la MATCOM.")
-################################################
+###################################################################
 st.write("### Inscripciones a la facultad a lo largo del tiempo.")
+###################################################################
 # Calcular el número de inscripciones por curso contando las repeticiones
 inscripciones_por_curso = data['Curso'].value_counts().reset_index()
 inscripciones_por_curso.columns = ['Curso', 'Inscripciones']
@@ -55,6 +60,7 @@ fig01.update_layout(
     yaxis=dict(showgrid=False),
     legend_title_text='Cursos')
 st.plotly_chart(fig01)
+
 ##########################################
 st.write("### Inscripciones por genero.")
 ##########################################
@@ -113,7 +119,12 @@ else:
     data_filtrada = data
 
 inscripciones_por_curso = data_filtrada.groupby(['Curso', 'Carrera']).size().reset_index(name='Número de Inscripciones')
-fig04 = px.bar(inscripciones_por_curso, x='Curso', y='Número de Inscripciones', color='Carrera', barmode='group',labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
+fig04 = px.bar(inscripciones_por_curso, 
+                y='Curso', 
+                x='Número de Inscripciones', 
+                color='Carrera', barmode='group',
+                orientation='h',
+                labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
 fig04.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 fig04.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='Carreras:')
 st.plotly_chart(fig04)
@@ -142,11 +153,10 @@ data_preuniversitario = data_preuniversitario[data_preuniversitario['Vía Ingres
 
 distribucion_pre = data_preuniversitario.groupby(['Curso', 'Tipo de Pre']).size().reset_index(name='Número de Estudiantes')
         
-fig06 = px.bar(distribucion_pre, 
+fig06 = px.line(distribucion_pre, 
                             x='Curso', 
                             y='Número de Estudiantes', 
                             color='Tipo de Pre', 
-                            barmode='group',
                             title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
                             labels={'Número de Estudiantes':'Número de Estudiantes', 'Curso':'Curso'})
 fig06.update_traces(marker=dict(line=dict(color='#000000', width=2)))
@@ -210,7 +220,7 @@ with col2:
     st.plotly_chart(fig08, use_container_width=True)  # Gráfico de Línea en la segunda columna
 
 ########################################################
-st.write("### Inscripciones por Provincia y Municipio")
+st.write("### Inscripciones por Provincia.")
 ########################################################
 inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
 
@@ -227,3 +237,4 @@ fig09.update_layout(
         yaxis=dict(showgrid=False),
         legend_title_text='Provincia')
 st.plotly_chart(fig09)
+
