@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-data = pd.read_json("./datos/datos_clasificados.json")
+data = pd.read_json("./datos/data.json")
 
 # Eliminar espacios en blanco al principio y al final de los nombres de las columnas
 data.columns = data.columns.str.strip()
