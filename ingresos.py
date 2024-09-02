@@ -1,17 +1,9 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-import geopandas as gpd
-import folium
-from streamlit_folium import st_folium
-import matplotlib.pyplot as plt
 
-data = pd.read_json("./datos/datos_clasificados.json")
+data = pd.read_json("./datos/data.json")
 
-# Eliminar espacios en blanco al principio y al final de los nombres de las columnas
-data.columns = data.columns.str.strip()
-# Eliminar espacios en blanco al principio y al final de todas las celdas
-data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 # Configurar pandas para mostrar todas las filas y columnas
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)

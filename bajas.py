@@ -3,13 +3,8 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
+data = pd.read_json("./datos/data.json")
 
-data = pd.read_json("./datos/datos_clasificados.json")
-
-#Eliminar espacios en blanco al principio y al final de los nombres de las columnas
-data.columns = data.columns.str.strip()
-# Eliminar espacios en blanco al principio y al final de todas las celdas
-data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 # Configurar pandas para mostrar todas las filas y columnas
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -90,6 +85,112 @@ fig13.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 fig13.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='Provincia')
 st.plotly_chart(fig13)
 
+
+# Crear la matriz de valores para el mapa de calor
+heatmap_data = bajas_por_provincia.pivot(index='Provincia', columns='Curso', values='Número de Bajas')
+
+# Reemplazar NaN con 0 en la matriz de datos
+heatmap_data = heatmap_data.fillna(0)
+
+# Crear el mapa de calor
+fig_heatmap = go.Figure(data=go.Heatmap(
+    z=heatmap_data.values,
+    x=heatmap_data.columns,
+    y=heatmap_data.index,
+    colorscale='Viridis',  # Escala de colores para representar la intensidad
+    colorbar=dict(title='Número de Bajas'),
+    zmin=0
+))
+
+# Agregar cuadrículas
+fig_heatmap.update_layout(
+    xaxis=dict(
+        title='Curso',
+        showgrid=True,
+        gridcolor='rgba(255, 255, 255, 0.5)',  # Color de la línea de cuadrícula
+        zeroline=False
+    ),
+    yaxis=dict(
+        title='Vía de Ingreso',
+        showgrid=True,
+        gridcolor='rgba(255, 255, 255, 0.5)',  # Color de la línea de cuadrícula
+        zeroline=False
+    ),
+    title='Mapa de Calor de Bajas por Provincia.'
+)
+
+# Agregar anotaciones solo para valores no nulos
+for i in range(len(heatmap_data.index)):
+    for j in range(len(heatmap_data.columns)):
+        value = heatmap_data.iloc[i, j]
+        if value > 0:  # Solo agregar anotaciones para valores mayores a 0
+            fig_heatmap.add_trace(go.Scatter(
+                x=[heatmap_data.columns[j]],
+                y=[heatmap_data.index[i]],
+                text=[f'{value:.0f}'],
+                mode='text',
+                showlegend=False
+            ))
+
+# Mostrar mapa de calor en Streamlit
+st.plotly_chart(fig_heatmap)
+
+
+
+st.write("### La mayor cantidad de bajas procede de La Habana xq de ella provienen más ingresos.")
+
+habana = data.groupby(["Curso", "Provincia"]).size().reset_index(name='Número de inscripciones')
+ingresos_habana = habana[habana['Provincia'] == 'LA HABANA']
+bajas_habana = bajas_por_provincia[bajas_por_provincia['Provincia'] == 'LA HABANA']
+
+
+ingresos_habana['Tipo'] = 'Ingresos'
+bajas_habana['Tipo'] = 'Bajas'
+bajas_habana = bajas_habana.rename(columns={'Número de Bajas': 'Número de inscripciones'})
+
+
+combinado = pd.concat([ingresos_habana, bajas_habana])
+
+fig = px.bar(combinado,
+            x='Curso', 
+            y='Número de inscripciones', 
+            barmode='group',
+            color='Tipo', 
+            title='Ingresos y Bajas por Curso en La Habana', 
+            labels={'Número de inscripciones': 'Número de Estudiantes'})
+fig.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='LA HABANA')
+st.plotly_chart(fig)
+
+
+st.write("### Xq piden la baja? Hipótesis:")
+st.write("### 1-No les gustó la carrera? (traslado)")
+st.write("### 2-Tenian mala preparacion?(resultado en la prueba de ingreso y opcion)")
+st.write("### 3-La distancia de la facultad(ya seas becado o no)")
+
+a = bajas.groupby(['Curso','Provincia','Situación académica', 'Tipo de estudiante' ]).size().reset_index(name='Cantidad')
+st.write(a)
+st.write("### La mayor cantidad de bajas de La Habana es Voluntaria, en cambio en el resto de las provincias vienen de estudiantes becados.")
+
+
+hab = bajas[(bajas['Provincia'] == 'LA HABANA') & (bajas['Situación académica'] == 'Voluntaria')]
+
+# Agrupar por curso, situación académica y tipo de estudiante
+habana = hab.groupby(['Curso', 'Situación académica', 'Tipo de estudiante', 'Carrera', 'Valor Opción', 'Sexo']).size().reset_index(name='Cantidad')
+
+st.write(habana)
+
+
+
+
+
+
+
+
+
+
+
+
 st.write("### De los estudiantes de baja de la habana(que no son becados) de que municipio son.")
 
 ##########################################
@@ -140,7 +241,7 @@ st.plotly_chart(fig06)
 ###############################################################################################
 st.write("### De las bajas de Pre normal, de qué preuniversitario es que vienen más bajas??")
 ###############################################################################################
-pre_normal = bajas[bajas["Tipo de Pre"] == "Pre normal"]
+pre_normal = bajas[bajas["Tipo de Pre"] == "IPU"]
 
 a = pre_normal.groupby(["Municipio", "Curso"]).size().reset_index(name="Número de bajas")
 
