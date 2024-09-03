@@ -4,43 +4,33 @@ import plotly.express as px
 
 data = pd.read_json("./datos/data.json")
 
-# Configurar pandas para mostrar todas las filas y columnas
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_colwidth', None)  
-pd.set_option('display.expand_frame_repr', False)
+#########################################################################################################################
+st.title("Primera Puerta al infierno de Dante.")
+st.write("## Primer círculo (ESTAS EN EL LIMBO).")
+st.write("Aquí se encuentran las almas de aquellos que no cometieron pecado alguno, pero que no fueron bautizados con la sabiduría de escoger otra carrera, mas bien viven en la felicidad de su ignorancia(SE MATRÍCULAN).")
+#########################################################################################################################
 
-st.markdown("# Ingresos a la MATCOM.")
 ###################################################################
 st.write("### Inscripciones a la facultad a lo largo del tiempo.")
-###################################################################
-# Calcular el número de inscripciones por curso contando las repeticiones
+################################################################## 
 inscripciones_por_curso = data['Curso'].value_counts().reset_index()
 inscripciones_por_curso.columns = ['Curso', 'Inscripciones']
-
-# Ordenar los cursos
 inscripciones_por_curso = inscripciones_por_curso.sort_values('Curso')
 
-# Crear filtros para seleccionar el curso de inicio y el curso final
 curso_inicio = st.selectbox(
     'Selecciona el curso de inicio',
     options=inscripciones_por_curso['Curso'].unique(),
-    index=0  # Por defecto, selecciona el primer curso en la lista
-)
+    index=0 )
 
 curso_final = st.selectbox(
     'Selecciona el curso final',
     options=inscripciones_por_curso['Curso'].unique(),
-    index=len(inscripciones_por_curso['Curso'].unique()) - 1  # Por defecto, selecciona el último curso en la lista
-)
+    index=len(inscripciones_por_curso['Curso'].unique()) - 1)
 
-# Filtrar los datos según el intervalo de cursos seleccionado
 datos_filtrados = inscripciones_por_curso[
     (inscripciones_por_curso['Curso'] >= curso_inicio) & 
-    (inscripciones_por_curso['Curso'] <= curso_final)
-]
+    (inscripciones_por_curso['Curso'] <= curso_final)]
 
-# Crear la gráfica de barras para el intervalo seleccionado
 fig01 = px.bar(datos_filtrados, 
                 x='Curso', 
                 y='Inscripciones', 
@@ -171,7 +161,6 @@ df_filtrado = data[(data['Curso'] == selected_curso) & (data['Carrera'] == selec
 via_ingreso_counts = df_filtrado['Vía Ingreso'].value_counts().reset_index()
 via_ingreso_counts.columns = ['Vía Ingreso', 'Número de Estudiantes']
 
-# Calcular porcentajes
 via_ingreso_counts['Porcentaje'] = (via_ingreso_counts['Número de Estudiantes'] / via_ingreso_counts['Número de Estudiantes'].sum()) * 100
 
 fig07 = px.pie(via_ingreso_counts, 
@@ -191,7 +180,6 @@ df_preuniversitario = df_filtrado[df_filtrado['Vía Ingreso'].str.contains('INST
 
 distribucion_pre = df_preuniversitario.groupby(['Curso', 'Tipo de Pre']).size().reset_index(name='Número de Estudiantes')
 
-# Gráfico de Línea para 'Número de Estudiantes' por Tipo de Instituto
 fig08 = px.pie(distribucion_pre, 
                 names='Tipo de Pre', 
                 values='Número de Estudiantes', 
@@ -206,10 +194,10 @@ fig08.update_layout(legend_title_text='Tipo de INSTITUTO PREUNIVERSITARIO',
 
 col1, col2 = st.columns([2, 1.6])
 with col1:
-    st.plotly_chart(fig07, use_container_width=True)  # Gráfico de Pie en la primera columna
+    st.plotly_chart(fig07, use_container_width=True)  
 
 with col2:
-    st.plotly_chart(fig08, use_container_width=True)  # Gráfico de Línea en la segunda columna
+    st.plotly_chart(fig08, use_container_width=True)  
 
 ########################################################
 st.write("### Inscripciones por Provincia.")

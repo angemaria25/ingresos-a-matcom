@@ -5,23 +5,18 @@ import plotly.graph_objects as go
 
 data = pd.read_json("./datos/data.json")
 
-# Configurar pandas para mostrar todas las filas y columnas
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_colwidth', None)  
-pd.set_option('display.expand_frame_repr', False)
-
-#####################################
-st.markdown("# Bajas de la MATCOM.")
-#####################################
+#########################################################################################################################
+st.title("Puerta de liberación inmediata.")
+st.write("## Dante decide abandonar el infierno.")
+st.write("Atajo de salida, los que deciden ir por  este atajo pueden ir a una 'felicidad' o EXTRAÑAR AL PROPIO INFIERNO.")
+#########################################################################################################################
 
 bajas = data[data['Estado'] == 'Baja']
 
-#################################
-st.write("### Bajas  por Curso.")
-#################################
+###############################################################
+st.write("### Bajas de los estudiantes ingresados por curso.")
+###############################################################
 bajas_por_curso = bajas.groupby('Curso').size().reset_index(name='Número de Bajas')
-
 cursos_disponibles = bajas_por_curso['Curso'].unique()
 
 cursos_seleccionados = st.select_slider(
@@ -34,7 +29,7 @@ cursos_filtrados = bajas_por_curso[(bajas_por_curso['Curso'] >= cursos_seleccion
 fig11 = px.bar(cursos_filtrados, 
                 x='Curso', 
                 y='Número de Bajas', 
-                title='Total de Bajas por Curso.',
+                title='Total de bajas de los estudiantes ingresados.',
                 labels={'Número de Bajas':'Número de Bajas', 'Curso':'Curso'})
 
 fig11.update_traces(marker=dict(color='red', line=dict(color='#000000', width=2)))
@@ -56,17 +51,14 @@ fig11.update_layout(
     legend_title_text='Cursos')
 st.plotly_chart(fig11)
 
-
-
 ##################################
-st.write("### Bajas por Género.")
+st.write("### Esta ligada la cantidad de bajas al sexo de los estudiantes que ingresan a la Facultad?")
 ##################################
 ingresos_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Total Ingresos')
 bajas_por_genero = bajas.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Bajas')
 bajas_por_genero = bajas_por_genero.merge(ingresos_por_genero, on=['Curso', 'Sexo'])
     
 bajas_por_genero['Porcentaje de Bajas'] = (bajas_por_genero['Número de Bajas'] / bajas_por_genero['Total Ingresos']) * 100
-
 bajas_por_genero = bajas_por_genero.sort_values('Curso', ascending=False)
 
 fig12 = px.bar(bajas_por_genero, 
@@ -75,7 +67,7 @@ fig12 = px.bar(bajas_por_genero,
                 color='Sexo', 
                 barmode='group',
                 orientation='h',
-                title='Porcentaje de Bajas por Género y Curso.',
+                title='Porcentaje de Bajas por Sexo y Curso.',
                 labels={'Porcentaje de Bajas':'Porcentaje de Bajas (%)', 'Curso':'Curso'},
                 color_discrete_map={'F': 'red', 'M': 'blue'})
 fig12.update_traces(marker=dict(line=dict(color='#000000', width=2)))
@@ -97,9 +89,9 @@ fig12.update_layout(
     legend_title_text='Género')
 st.plotly_chart(fig12)
 
-#####################################################
-st.write("### De qué carrera vienen las hembras??")
-#####################################################
+#################################################################################################################
+st.write("###El sexo femenino es el que mas tiende a pedir la baja? Como esto se comporta esto por carreras? ")
+#################################################################################################################
 mostrar_grafico_hembras = st.checkbox('Análisis de las Bajas del sexo Femenino por carrera.', value=False)
 
 if mostrar_grafico_hembras:
@@ -145,63 +137,46 @@ if mostrar_grafico_hembras:
     legend_title_text='Género')
     st.plotly_chart(fig_hembras)
     
-#####################################
-st.write("### Bajas por Provincia.")
-#####################################
+##########################################################################################
+st.write("### De que Provincias provienen los estudiantes que mayormente piden la baja?")
+###########################################################################################
 bajas_por_provincia = bajas.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Bajas')
     
-# fig13 = px.bar(bajas_por_provincia, 
-#                     x='Curso', 
-#                     y='Número de Bajas', 
-#                     color='Provincia', 
-#                     barmode='group',
-#                     title='Bajas por Provincia y Curso.',
-#                     labels={'Número de Bajas':'Número de Bajas', 'Curso':'Curso'})
-# fig13.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-# fig13.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='Provincia')
-# st.plotly_chart(fig13)
-
-
-# Crear la matriz de valores para el mapa de calor
 heatmap_data = bajas_por_provincia.pivot(index='Provincia', columns='Curso', values='Número de Bajas')
 
-# Reemplazar NaN con 0 en la matriz de datos
 heatmap_data = heatmap_data.fillna(0)
 
-# Crear el mapa de calor con escala de colores personalizada
 fig_heatmap = go.Figure(data=go.Heatmap(
     z=heatmap_data.values,
     x=heatmap_data.columns,
     y=heatmap_data.index,
-    colorscale=[[0, 'rgb(255, 230, 230)'],   # Color claro para valores bajos
-                [0.5, 'rgb(255, 140, 140)'], # Color intermedio
-                [1, 'rgb(165, 0, 0)']],      # Color oscuro para valores altos
+    colorscale=[[0, 'rgb(255, 230, 230)'],  
+                [0.5, 'rgb(255, 140, 140)'], 
+                [1, 'rgb(165, 0, 0)']],      
     colorbar=dict(title='Número de Bajas'),
     zmin=0
 ))
 
-# Agregar cuadrículas
 fig_heatmap.update_layout(
     xaxis=dict(
         title='Curso',
         showgrid=True,
-        gridcolor='rgba(255, 255, 255, 0.5)',  # Color de la línea de cuadrícula
+        gridcolor='rgba(255, 255, 255, 0.5)', 
         zeroline=False
     ),
     yaxis=dict(
         title='Provincia',
         showgrid=True,
-        gridcolor='rgba(255, 255, 255, 0.5)',  # Color de la línea de cuadrícula
+        gridcolor='rgba(255, 255, 255, 0.5)',  
         zeroline=False
     ),
     title='Mapa de Calor de Bajas por Provincia.'
 )
 
-# Agregar anotaciones solo para valores no nulos
 for i in range(len(heatmap_data.index)):
     for j in range(len(heatmap_data.columns)):
         value = heatmap_data.iloc[i, j]
-        if value > 0:  # Solo agregar anotaciones para valores mayores a 0
+        if value > 0:  
             fig_heatmap.add_trace(go.Scatter(
                 x=[heatmap_data.columns[j]],
                 y=[heatmap_data.index[i]],
@@ -211,20 +186,46 @@ for i in range(len(heatmap_data.index)):
             ))
 st.plotly_chart(fig_heatmap)
 
-##############################################################################
-st.write("### Los estudiantes becados son los que mas piden la baja?")
-##############################################################################
+##########################################################################################################################
+st.write("### Los estudiantes becados al estar en desventaja por estar lejos de sus hogares, son los que tienden a irse de la carrera?")
+##########################################################################################################################
 a = bajas.groupby(['Curso','Provincia','Situación académica', 'Tipo de estudiante' ]).size().reset_index(name='Cantidad')
 st.write(a)
-st.write("### La mayor cantidad de bajas de La Habana es Voluntaria, en cambio en el resto de las provincias vienen de estudiantes becados.")
+st.write("### La mayor cantidad de bajas de La Habana es voluntaria, en cambio en el resto de las provincias estas provienen de estudiantes becados.")
 # hab = bajas[(bajas['Provincia'] == 'LA HABANA') & (bajas['Situación académica'] == 'Voluntaria')]
 # # Agrupar por curso, situación académica y tipo de estudiante
 # habana = hab.groupby(['Curso', 'Situación académica', 'Tipo de estudiante', 'Carrera']).size().reset_index(name='Cantidad')
 # st.write(habana)
 
-##########################################
-st.write("### Bajas por Vía de Ingreso.")
-##########################################
+# Supongamos que 'a' es el DataFrame resultante del agrupamiento
+# a = bajas.groupby(['Curso','Provincia','Situación académica', 'Tipo de estudiante' ]).size().reset_index(name='Cantidad')
+
+##################################################################
+#Bajas de wstudiastes en dependenci de si son becados o externos
+##################################################################
+bajas_por_provincia_tipo = a.groupby(['Provincia', 'Tipo de estudiante']).sum().reset_index()
+
+provincias = bajas_por_provincia_tipo['Provincia'].unique()
+color_map = {provincia: px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)] for i, provincia in enumerate(provincias)}
+
+fig_barras = px.bar(bajas_por_provincia_tipo, 
+                    x='Tipo de estudiante', 
+                    y='Cantidad', 
+                    color='Provincia',
+                    barmode='group',
+                    title='Bajas por Tipo de Estudiante y Provincia',
+                    labels={'Cantidad': 'Número de Bajas', 'Tipo de estudiante': 'Tipo de Estudiante', 'Provincia': 'Provincia'},
+                    color_discrete_map=color_map)
+fig_barras.update_layout(
+    xaxis=dict(showgrid=False),
+    yaxis=dict(showgrid=False),
+    legend_title_text='Provincia',
+    title_x=0.5)
+st.plotly_chart(fig_barras)
+
+#########################################################################################################################
+st.write("###la preparacion en dependencia de la via de ingreso puede afectar a que el estudiante se sienta en la necesidad de pedir de la baja? ")
+##########################################################################################################################
 bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
 
 fig_bubble = px.scatter(
@@ -235,14 +236,12 @@ fig_bubble = px.scatter(
     color='Vía Ingreso',
     title='Bajas por Vía de Ingreso y Curso',
     labels={'Número de Bajas': 'Número de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'},
-    size_max=60
-)
+    size_max=60)
 
 fig_bubble.update_layout(
     xaxis=dict(showgrid=False),
     yaxis=dict(showgrid=False),
-    legend_title_text='Leyenda:'
-)
+    legend_title_text='Leyenda:')
 st.plotly_chart(fig_bubble)
 
 #####################################
@@ -321,12 +320,9 @@ fig16 = px.line(bajas_por_carrera_curso,
                 labels={'Número de Bajas': 'Número de Bajas', 'Carrera': 'Carrera'},
                 markers=True,
                 color_discrete_map={'LIC. CIENCIAS DE LA COMPUTACION': 'blue', 'LIC. MATEMATICA': 'red'})
-
 fig16.update_traces(
     line=dict(width=3.5),
-    marker=dict(size=6, symbol='circle', line=dict(width=2, color='black'), color='black')
-)
-
+    marker=dict(size=6, symbol='circle', line=dict(width=2, color='black'), color='black'))
 fig16.update_layout(
     xaxis=dict(showgrid=False),
     yaxis=dict(showgrid=False),
@@ -373,21 +369,16 @@ fig.add_trace(go.Bar(
     name='Total Ingresos por Curso',
     marker_color='green',
     marker_line=dict(color='black', width=1),
-    hovertemplate='%{x:.0f}<extra></extra>'
-))
-
+    hovertemplate='%{x:.0f}<extra></extra>'))
 fig.update_layout(
     title='Comparación entre Bajas y Ingresos por Cursos',
     xaxis_title='Cantidad',
     yaxis_title='Curso',
     barmode='overlay',
     xaxis=dict(zeroline=False, showgrid=False, gridwidth=1),
-    yaxis=dict(title='Curso', showgrid=False, gridwidth=1)
-)
-
+    yaxis=dict(title='Curso', showgrid=False, gridwidth=1))
 fig.update_layout(height=600, width=800)
 st.plotly_chart(fig)
-
 
 ######################################################
 
@@ -396,10 +387,8 @@ st.plotly_chart(fig)
 
 
 # #TREEMAP
-
 # # Agrupar las bajas por curso, vía de ingreso y preuniversitario
 # bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
-
 # # Crear gráfico de treemap
 # fig_treemap = px.treemap(
 #     bajas_por_via,
@@ -410,69 +399,13 @@ st.plotly_chart(fig)
 #     color_discrete_sequence=px.colors.qualitative.Plotly,
 #     labels={'Número de Bajas': 'Número de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'}
 # )
-
 # # Actualizar diseño del gráfico
 # fig_treemap.update_layout(
 #     legend_title_text='Vía de Ingreso'
 # )
-
 # # Mostrar gráfico de treemap en Streamlit
 # st.plotly_chart(fig_treemap)
 
-
-# #MAPA DE CALOR
-
-# # Agrupar las bajas por curso y vía de ingreso
-# bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
-
-# # Crear la matriz de valores para el mapa de calor
-# heatmap_data = bajas_por_via.pivot(index='Vía Ingreso', columns='Curso', values='Número de Bajas')
-
-# # Reemplazar NaN con 0 en la matriz de datos
-# heatmap_data = heatmap_data.fillna(0)
-
-# # Crear el mapa de calor
-# fig_heatmap = go.Figure(data=go.Heatmap(
-#     z=heatmap_data.values,
-#     x=heatmap_data.columns,
-#     y=heatmap_data.index,
-#     colorscale='Viridis',  # Escala de colores para representar la intensidad
-#     colorbar=dict(title='Número de Bajas'),
-#     zmin=0
-# ))
-
-# # Agregar cuadrículas
-# fig_heatmap.update_layout(
-#     xaxis=dict(
-#         title='Curso',
-#         showgrid=True,
-#         gridcolor='rgba(255, 255, 255, 0.5)',  # Color de la línea de cuadrícula
-#         zeroline=False
-#     ),
-#     yaxis=dict(
-#         title='Vía de Ingreso',
-#         showgrid=True,
-#         gridcolor='rgba(255, 255, 255, 0.5)',  # Color de la línea de cuadrícula
-#         zeroline=False
-#     ),
-#     title='Mapa de Calor de Bajas por Curso y Vía de Ingreso'
-# )
-
-# # Agregar anotaciones solo para valores no nulos
-# for i in range(len(heatmap_data.index)):
-#     for j in range(len(heatmap_data.columns)):
-#         value = heatmap_data.iloc[i, j]
-#         if value > 0:  # Solo agregar anotaciones para valores mayores a 0
-#             fig_heatmap.add_trace(go.Scatter(
-#                 x=[heatmap_data.columns[j]],
-#                 y=[heatmap_data.index[i]],
-#                 text=[f'{value:.0f}'],
-#                 mode='text',
-#                 showlegend=False
-#             ))
-
-# # Mostrar mapa de calor en Streamlit
-# st.plotly_chart(fig_heatmap)
 
 
 # # Crear gráfico de rosca multinivel
@@ -509,7 +442,6 @@ st.plotly_chart(fig)
 
 
 # import altair as alt
-
 # # Datos de ejemplo
 # d = {
 #     'Curso': ['Curso A', 'Curso B', 'Curso C', 'Curso D'],
