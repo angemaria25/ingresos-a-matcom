@@ -11,7 +11,9 @@ st.write("## Dante decide abandonar el infierno.")
 st.write("Atajo de salida, los que deciden ir por  este atajo pueden ir a una 'felicidad' o EXTRAÑAR AL PROPIO INFIERNO.")
 #########################################################################################################################
 
+######################################
 bajas = data[data['Estado'] == 'Baja']
+######################################
 
 ###############################################################
 st.write("### Bajas de los estudiantes ingresados por curso.")
@@ -51,9 +53,9 @@ fig11.update_layout(
     legend_title_text='Cursos')
 st.plotly_chart(fig11)
 
-##################################
-st.write("### Esta ligada la cantidad de bajas al sexo de los estudiantes que ingresan a la Facultad?")
-##################################
+#######################################################################################################################
+st.write("### ¿Cómo se comportan la cantidad de bajas respecto al sexo de los estudiantes que ingresan a la Facultad?")
+########################################################################################################################
 ingresos_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Total Ingresos')
 bajas_por_genero = bajas.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Bajas')
 bajas_por_genero = bajas_por_genero.merge(ingresos_por_genero, on=['Curso', 'Sexo'])
@@ -89,9 +91,9 @@ fig12.update_layout(
     legend_title_text='Género')
 st.plotly_chart(fig12)
 
-#################################################################################################################
-st.write("###El sexo femenino es el que mas tiende a pedir la baja? Como esto se comporta esto por carreras? ")
-#################################################################################################################
+#####################################################################################################################
+st.write("### ¿El sexo femenino es el que más tiende a pedir la baja? ¿Cómo se comporta este fenómeno por carreras? ")
+#####################################################################################################################
 mostrar_grafico_hembras = st.checkbox('Análisis de las Bajas del sexo Femenino por carrera.', value=False)
 
 if mostrar_grafico_hembras:
@@ -108,7 +110,7 @@ if mostrar_grafico_hembras:
 
     bajas_hembras_curso['Porcentaje de Bajas Carrera'] = (bajas_hembras_curso['Número de Bajas Carrera'] / bajas_hembras_curso['Total Bajas Curso']) * bajas_hembras_curso['Porcentaje de Bajas']
 
-    fig_hembras = px.bar(bajas_hembras_curso, 
+    fig13 = px.bar(bajas_hembras_curso, 
                             y='Curso', 
                             x='Porcentaje de Bajas Carrera', 
                             color='Carrera',
@@ -117,10 +119,8 @@ if mostrar_grafico_hembras:
                             title='Porcentaje de Bajas de Hembras por Carrera dentro de cada Curso.',
                             labels={'Porcentaje de Bajas Carrera': 'Porcentaje de Bajas (%)', 'Curso': 'Curso', 'Carrera': 'Carrera'},
                             color_discrete_map={'LIC. MATEMÁTICA': 'red',    'LIC. CIENCIAS DE LA COMPUTACIÓN': 'lightcoral'})
-
-    fig_hembras.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-    
-    fig_hembras.update_layout(
+    fig13.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+    fig13.update_layout(
     xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
@@ -135,10 +135,10 @@ if mostrar_grafico_hembras:
         font=dict(color='black')
     ),
     legend_title_text='Género')
-    st.plotly_chart(fig_hembras)
+    st.plotly_chart(fig13)
     
-##########################################################################################
-st.write("### De que Provincias provienen los estudiantes que mayormente piden la baja?")
+###########################################################################################
+st.write("### ¿De que Provincias provienen los estudiantes que mayormente piden la baja?")
 ###########################################################################################
 bajas_por_provincia = bajas.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Bajas')
     
@@ -156,23 +156,26 @@ fig_heatmap = go.Figure(data=go.Heatmap(
     colorbar=dict(title='Número de Bajas'),
     zmin=0
 ))
-
 fig_heatmap.update_layout(
     xaxis=dict(
         title='Curso',
         showgrid=True,
         gridcolor='rgba(255, 255, 255, 0.5)', 
-        zeroline=False
+        zeroline=False,
+        linecolor='white',  
+        titlefont=dict(color='black'), 
+        tickfont=dict(color='black')  
     ),
     yaxis=dict(
         title='Provincia',
         showgrid=True,
         gridcolor='rgba(255, 255, 255, 0.5)',  
-        zeroline=False
+        zeroline=False,
+        linecolor='white',  
+        titlefont=dict(color='black'),  
+        tickfont=dict(color='black') 
     ),
-    title='Mapa de Calor de Bajas por Provincia.'
-)
-
+    title='Mapa de Calor de Bajas por Provincia.')
 for i in range(len(heatmap_data.index)):
     for j in range(len(heatmap_data.columns)):
         value = heatmap_data.iloc[i, j]
@@ -187,28 +190,20 @@ for i in range(len(heatmap_data.index)):
 st.plotly_chart(fig_heatmap)
 
 ##########################################################################################################################
-st.write("### Los estudiantes becados al estar en desventaja por estar lejos de sus hogares, son los que tienden a irse de la carrera?")
+st.write("### ¿Los estudiantes becados al estar en desventaja por estar lejos de sus hogares, son los que tienden a irse de la carrera?")
 ##########################################################################################################################
 a = bajas.groupby(['Curso','Provincia','Situación académica', 'Tipo de estudiante' ]).size().reset_index(name='Cantidad')
 st.write(a)
-st.write("### La mayor cantidad de bajas de La Habana es voluntaria, en cambio en el resto de las provincias estas provienen de estudiantes becados.")
-# hab = bajas[(bajas['Provincia'] == 'LA HABANA') & (bajas['Situación académica'] == 'Voluntaria')]
-# # Agrupar por curso, situación académica y tipo de estudiante
-# habana = hab.groupby(['Curso', 'Situación académica', 'Tipo de estudiante', 'Carrera']).size().reset_index(name='Cantidad')
-# st.write(habana)
-
-# Supongamos que 'a' es el DataFrame resultante del agrupamiento
-# a = bajas.groupby(['Curso','Provincia','Situación académica', 'Tipo de estudiante' ]).size().reset_index(name='Cantidad')
 
 ##################################################################
-#Bajas de wstudiastes en dependenci de si son becados o externos
+#Bajas de estudiastes en dependencia de si son becados o externos
 ##################################################################
 bajas_por_provincia_tipo = a.groupby(['Provincia', 'Tipo de estudiante']).sum().reset_index()
 
 provincias = bajas_por_provincia_tipo['Provincia'].unique()
 color_map = {provincia: px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)] for i, provincia in enumerate(provincias)}
 
-fig_barras = px.bar(bajas_por_provincia_tipo, 
+fig14 = px.bar(bajas_por_provincia_tipo, 
                     x='Tipo de estudiante', 
                     y='Cantidad', 
                     color='Provincia',
@@ -216,19 +211,30 @@ fig_barras = px.bar(bajas_por_provincia_tipo,
                     title='Bajas por Tipo de Estudiante y Provincia',
                     labels={'Cantidad': 'Número de Bajas', 'Tipo de estudiante': 'Tipo de Estudiante', 'Provincia': 'Provincia'},
                     color_discrete_map=color_map)
-fig_barras.update_layout(
-    xaxis=dict(showgrid=False),
-    yaxis=dict(showgrid=False),
-    legend_title_text='Provincia',
-    title_x=0.5)
-st.plotly_chart(fig_barras)
+fig14.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig14.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Tipo de estudiante', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Cantidad', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Provincia')
+st.plotly_chart(fig14)
 
 #########################################################################################################################
-st.write("###la preparacion en dependencia de la via de ingreso puede afectar a que el estudiante se sienta en la necesidad de pedir de la baja? ")
+st.write("### ¿La preparación en dependencia de la Vía de Ingreso puede afectar a que el estudiante se sienta en la necesidad de pedir de la baja?")
 ##########################################################################################################################
 bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
 
-fig_bubble = px.scatter(
+fig15 = px.scatter(
     bajas_por_via,
     x='Curso',
     y='Vía Ingreso',
@@ -237,21 +243,32 @@ fig_bubble = px.scatter(
     title='Bajas por Vía de Ingreso y Curso',
     labels={'Número de Bajas': 'Número de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'},
     size_max=60)
+fig15.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig15.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Vía Ingreso', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Leyenda')
+st.plotly_chart(fig15)
 
-fig_bubble.update_layout(
-    xaxis=dict(showgrid=False),
-    yaxis=dict(showgrid=False),
-    legend_title_text='Leyenda:')
-st.plotly_chart(fig_bubble)
-
-#####################################
+####################################
 #Distribución según el tipo de pre
 ####################################
 data_preuniversitario = bajas.dropna(subset=['Vía Ingreso'])
 data_preuniversitario = data_preuniversitario[data_preuniversitario['Vía Ingreso'].str.contains('INSTITUTOS PREUNIVERSITARIOS', na=False)]
 distribucion_pre = data_preuniversitario.groupby(['Curso', 'Tipo de Pre']).size().reset_index(name='Número de Estudiantes')
         
-fig06 = px.bar(distribucion_pre, 
+fig16 = px.bar(distribucion_pre, 
                             y='Curso', 
                             x='Número de Estudiantes', 
                             color='Tipo de Pre', 
@@ -259,35 +276,61 @@ fig06 = px.bar(distribucion_pre,
                             orientation='h',
                             title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
                             labels={'Número de Estudiantes':'Número de Estudiantes', 'Curso':'Curso'})
-fig06.update_traces(marker=dict(line=dict(color='#000000', width=1)))
-fig06.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='Tipo de Pre')
-st.plotly_chart(fig06)
+fig16.update_traces(marker=dict(line=dict(color='#000000', width=1)))
+fig16.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de Estudiantes', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Tipo de Pre')
+st.plotly_chart(fig16)
 
-#########################################################################################
-st.write("### De las bajas de IPU, de qué preuniversitario es que vienen más bajas??")
-#########################################################################################
+####################################################################################################################
+st.write("### ¿En qué municipio se concentra la mayor cantidad de bajas de IPU según el tipo de preuniversitario?")
+####################################################################################################################
 pre_normal = bajas[bajas["Tipo de Pre"] == "IPU"]
 a = pre_normal.groupby(["Municipio", "Curso"]).size().reset_index(name="Número de bajas")
 
 unique_municipios = a['Municipio'].unique()
 color_discrete_sequence = px.colors.qualitative.Dark24[:len(unique_municipios)]
 
-fig = px.scatter(a, 
+fig17 = px.scatter(a, 
                 x='Curso', 
                 y='Número de bajas', 
                 color='Municipio',
                 color_discrete_sequence=color_discrete_sequence,
                 category_orders={'Preuniversitario': ['A', 'B', 'C']},
-                title='Distribución de Estudiantes de Pre de la calle por Municipio y Tipo de Preuniversitario')
+                title='Distribución de Estudiantes de Baja de IPU por municipio según los Tipos de Preuniversitarios')
+fig17.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig17.update_layout(barmode='stack',
+                    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de bajas', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Municipios')
+st.plotly_chart(fig17)
 
-fig.update_layout(barmode='stack')
-st.plotly_chart(fig)
-
-st.write("### Cojer los municipios que mas se repiten y hacer mapa para visualizar a que distancia estan de la universidad??")
-
-###################################
-st.write("### Bajas por Carrera.")
-###################################
+######################################################
+st.write("### Distribución de las Bajas por Carrera.")
+######################################################
 cursos_disponibles = bajas['Curso'].unique()
 cursos_select = st.select_slider(
     'Selecciona el rango de Cursos:',
@@ -312,7 +355,7 @@ for carrera, seleccionada in carreras_seleccionadas.items():
 bajas = bajas[bajas['Carrera'].isin(carreras_filtradas)]
 bajas_por_carrera_curso = bajas.groupby(['Carrera', 'Curso']).size().reset_index(name='Número de Bajas')
 
-fig16 = px.line(bajas_por_carrera_curso,
+fig18 = px.line(bajas_por_carrera_curso,
                 x='Curso',
                 y='Número de Bajas',
                 color='Carrera',
@@ -320,38 +363,42 @@ fig16 = px.line(bajas_por_carrera_curso,
                 labels={'Número de Bajas': 'Número de Bajas', 'Carrera': 'Carrera'},
                 markers=True,
                 color_discrete_map={'LIC. CIENCIAS DE LA COMPUTACION': 'blue', 'LIC. MATEMATICA': 'red'})
-fig16.update_traces(
+fig18.update_traces(
     line=dict(width=3.5),
     marker=dict(size=6, symbol='circle', line=dict(width=2, color='black'), color='black'))
-fig16.update_layout(
-    xaxis=dict(showgrid=False),
-    yaxis=dict(showgrid=False),
-    legend_title_text='Carreras:')  
-st.plotly_chart(fig16)
+fig18.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de Bajas', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Carreras')
+st.plotly_chart(fig18)
 
 ##############################################################
-st.write("### De matematica cuantas bajas son de varones??")
+st.write("### ¿De Matemática cuántas bajas son de varones??")
 ##############################################################
 mat = bajas[bajas["Carrera"] == "LIC. MATEMÁTICA"]
 mates = mat.groupby(["Curso", "Sexo"]).size().reset_index(name='Número de bajas')
 st.write(mates)
 
-com = bajas[bajas["Carrera"] == "LIC. CIENCIAS DE LA COMPUTACIÓN"]
-comput = com.groupby(["Curso", "Sexo"]).size().reset_index(name='Número de bajas')
-st.write(comput)
-
-##########################################################################
-st.write("### Comparación entre los ingresos y las bajas en cada curso.")
-##########################################################################
+#############################################################################################
+st.write("### Comportamiento de las Bajas respecto a la cantidad de Ingresos en cada curso.")
+#############################################################################################
 bajas = data[data["Estado"]=="Baja"].groupby('Curso').size().reset_index(name='Número de Bajas')
 ingresos = data.groupby('Curso').size().reset_index(name='Número de Ingresos')
-
 df = pd.merge(bajas, ingresos, on='Curso', how='outer').fillna(0)
-
 df.columns = ['Curso', 'Bajas', 'Ingresos']
 
 fig = go.Figure()
-
 fig.add_trace(go.Bar(
     y=df['Curso'],
     x=-df['Bajas'],
@@ -361,7 +408,6 @@ fig.add_trace(go.Bar(
     marker_line=dict(color='black', width=1),
     hovertemplate='%{x:.0f}<extra></extra>'
 ))
-
 fig.add_trace(go.Bar(
     y=df['Curso'],
     x=df['Ingresos'],
@@ -371,106 +417,28 @@ fig.add_trace(go.Bar(
     marker_line=dict(color='black', width=1),
     hovertemplate='%{x:.0f}<extra></extra>'))
 fig.update_layout(
-    title='Comparación entre Bajas y Ingresos por Cursos',
+    title='Comparación entre Bajas y Ingresos por Cursos.',
     xaxis_title='Cantidad',
     yaxis_title='Curso',
     barmode='overlay',
-    xaxis=dict(zeroline=False, showgrid=False, gridwidth=1),
-    yaxis=dict(title='Curso', showgrid=False, gridwidth=1))
-fig.update_layout(height=600, width=800)
+    xaxis=dict(
+        zeroline=False,
+        showgrid=False,
+        gridwidth=1,
+        color='black',
+        tickfont=dict(color='black'),
+        titlefont=dict(color='black')
+    ),
+    yaxis=dict(
+        title='Curso',
+        showgrid=False,
+        gridwidth=1,
+        color='black',  
+        tickfont=dict(color='black'),
+        titlefont=dict(color='black')
+    ),
+    height=600,
+    width=800
+)
 st.plotly_chart(fig)
-
-######################################################
-
-# # Agrupar las bajas por curso y vía de ingreso
-# bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
-
-
-# #TREEMAP
-# # Agrupar las bajas por curso, vía de ingreso y preuniversitario
-# bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
-# # Crear gráfico de treemap
-# fig_treemap = px.treemap(
-#     bajas_por_via,
-#     path=['Curso', 'Vía Ingreso',],  # Jerarquía del gráfico
-#     values='Número de Bajas',
-#     title='Bajas por Curso, Vía de Ingreso',
-#     color='Vía Ingreso',
-#     color_discrete_sequence=px.colors.qualitative.Plotly,
-#     labels={'Número de Bajas': 'Número de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'}
-# )
-# # Actualizar diseño del gráfico
-# fig_treemap.update_layout(
-#     legend_title_text='Vía de Ingreso'
-# )
-# # Mostrar gráfico de treemap en Streamlit
-# st.plotly_chart(fig_treemap)
-
-
-
-# # Crear gráfico de rosca multinivel
-# fig_sunburst = px.sunburst(
-#     bajas_por_via,
-#     path=['Curso', 'Vía Ingreso'],  # Jerarquía del gráfico
-#     values='Número de Bajas',
-#     title='Bajas por Curso y Vía de Ingreso',
-#     color='Vía Ingreso',
-#     color_discrete_sequence=px.colors.qualitative.Plotly,
-# )
-
-# # Actualizar diseño del gráfico
-# fig_sunburst.update_layout(
-#     legend_title_text='Vía de Ingreso',
-#     width=600,  # Ajustar el ancho del gráfico
-#     height=600,  # Ajustar la altura del gráfico
-#     margin=dict(t=100, b=100, l=100, r=100)  # Ajustar márgenes
-# )
-
-# # Actualizar trazas para bordes más gruesos
-# fig_sunburst.update_traces(
-#     marker=dict(
-#         line=dict(
-#             width=2,  # Grosor del borde
-#             color='black'  # Color del borde
-#         )
-#     )
-# )
-
-# # Mostrar gráfico de rosca en Streamlit
-# st.plotly_chart(fig_sunburst)
-
-
-
-# import altair as alt
-# # Datos de ejemplo
-# d = {
-#     'Curso': ['Curso A', 'Curso B', 'Curso C', 'Curso D'],
-#     'Valores 1': [20, 35, 30, 35],
-#     'Valores 2': [25, 32, 34, 20]
-# }
-
-# # Convertir los datos a un DataFrame de pandas
-# df = pd.DataFrame(d)
-
-# # Transformar los datos para Altair
-# df_melted = df.melt(id_vars='Curso', value_vars=['Valores 1', 'Valores 2'], var_name='Tipo', value_name='Valor')
-
-# # Crear el gráfico
-# chart = alt.Chart(df_melted).mark_bar().encode(
-#     y=alt.Y('Curso:N', sort='-x'),
-#     x=alt.X('Valor:Q', axis=alt.Axis(title='Valores')),
-#     color='Tipo:N',
-#     tooltip=['Curso', 'Tipo', 'Valor']
-# ).properties(
-#     title='Comparación de dos valores por curso'
-# ).configure_axis(
-#     labelFontSize=12,
-#     titleFontSize=14
-# ).configure_title(
-#     fontSize=16
-# )
-
-# # Mostrar el gráfico en Streamlit
-# st.altair_chart(chart, use_container_width=True)
-
 

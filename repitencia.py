@@ -165,9 +165,31 @@ st.plotly_chart(fig05)
 ######################################################################################################################
 st.write("Los estudiantes que piden Repitencia xq lo piden? Cuántas asignaturas suspendieron? Qué asignaturas son?")
 ######################################################################################################################
+filtrado = new[new['Promoción'] == 'Repitencia']
 
+# Crear un DataFrame con las asignaturas desaprobadas
+asignaturas_desaprobadas = filtrado.melt(
+    id_vars=['Carrera', 'Curso'],
+    value_vars=['Desaprobadas Sem.1', 'Desaprobadas Sem.2'],
+    var_name='Semestre',
+    value_name='Asignaturas Desaprobadas')
 
+# Explode para separar las asignaturas en filas separadas
+asignaturas_desaprobadas = asignaturas_desaprobadas.dropna(subset=['Asignaturas Desaprobadas'])
+asignaturas_desaprobadas['Asignaturas Desaprobadas'] = asignaturas_desaprobadas['Asignaturas Desaprobadas'].str.split(',')
+asignaturas_desaprobadas = asignaturas_desaprobadas.explode('Asignaturas Desaprobadas')
 
+asignaturas_desaprobadas['Asignaturas Desaprobadas'] = asignaturas_desaprobadas['Asignaturas Desaprobadas'].str.strip()
+
+conteo_asignaturas = asignaturas_desaprobadas.groupby(['Carrera', 'Curso', 'Semestre', 'Asignaturas Desaprobadas']).size().reset_index(name='Cantidad')
+
+fig_treemap = px.treemap(conteo_asignaturas, 
+                            path=['Carrera', 'Curso', 'Semestre', 'Asignaturas Desaprobadas'], 
+                            values='Cantidad', 
+                            color='Cantidad',
+                            color_continuous_scale='RdBu',
+                            title='Asignaturas Desaprobadas por Estudiantes que Solicitaron Repitencia según el Semestre')
+st.plotly_chart(fig_treemap)
 
 
 
