@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import re
 
 data = pd.read_json("./datos/data_grupos.json")
 
@@ -48,9 +49,10 @@ fig02 = px.bar(rep_carrera,
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
 st.plotly_chart(fig02)
 
-#################################################
-st.write("De qué año proceden los repitentes?")
-#################################################
+########################################################################################
+st.write("Qué año cursan los estudiantes repitentes?")
+st.write("Aclaración: La carrera de Ciencia de Datos comenzó en el curso 2023-2024.")
+#########################################################################################
 rep_ano = rep.groupby(['Curso', 'Carrera', 'Año']).size().reset_index(name='Cantidad de repitentes')
 
 curso_seleccionado = st.selectbox('Selecciona un Curso:', rep_ano['Curso'].unique())
@@ -70,10 +72,23 @@ fig03 = px.bar(df_filtrado,
     labels={'Cantidad de repitentes': 'Cantidad de Repitentes', 'Año': 'Año'})
 st.plotly_chart(fig03)
 
+
+##########################################################################################
+st.write("Por qué hay tantos repitentes de Ciencia de Datos? Motivos de la repitencia.")
+##########################################################################################
+
+
+
+
+
+
+
 #########################################################################################
 st.write("De los repitentes de 1er Año cuántos piden la Baja? Cuántos piden Reingreso?")
+st.write("Aclaraciones:")
 st.write("En 2018-2019 no se tienen datos de Promoción.")
 st.write("En 2021-2022 de los dos repitentes que había ninguno pidió la baja.")
+st.write("Explicar los tipos de Baja.")
 #########################################################################################
 repitentes_1ro = rep[rep['Año'] == '1ro']
 
@@ -115,7 +130,7 @@ df_analisis_melted['Tipo de Solicitud'] = df_analisis_melted['Tipo de Solicitud'
     'Cantidad de Licencia de Matrícula': 'Licencia de Matrícula',
     'Cantidad de Reingreso': 'Reingreso'})
 
-fig = px.bar(
+fig04 = px.bar(
     df_analisis_melted,
     x='Curso',
     y='Cantidad',
@@ -124,12 +139,46 @@ fig = px.bar(
     barmode='group',
     title='Bajas y Reingresos de los Estudiantes Repitentes de Primer Año.',
     labels={'Cantidad': 'Cantidad', 'Tipo de Solicitud': 'Tipo de Solicitud'})
-st.plotly_chart(fig)
+st.plotly_chart(fig04)
+
 
 #####################################################################################################################
-st.write("De los estudiantes de Nuevo Ingreso(primer año) cuántos piden piden Repitencia? Cuántos piden Año Cero?")
-st.write("Explicar la modalidad Año Cero")
+st.write("De los estudiantes de Nuevo Ingreso (Primer Año) cuántos piden piden Repitencia? Cuántos piden Año Cero?")
+st.write("Explicar la modalidad Año Cero (Comenzó en el curso 2019-2020).")
+st.write("La repitencia solo se puede pedir en segundo semestre.")
 #####################################################################################################################
+nuevo_ingreso = data[data["Situación académica"] == "Nuevo Ingreso"]
+new = nuevo_ingreso.drop_duplicates(subset=['Nombre y Apellidos', 'Curso', 'Carrera', 'Grupo', 'Semestre'])
+new['Promoción'] = new['Promoción'].apply(lambda x: 'Repitencia' if pd.notna(x) and re.search(r'(?i)^repite', x) else x)
+filtrado = new[new['Promoción'].isin(['Repitencia', 'Año Cero'])]
+conteo = filtrado.groupby(['Carrera', 'Curso', 'Promoción']).size().reset_index(name='Cantidad')
+
+fig05 = px.bar(conteo, 
+                x='Curso', 
+                y='Cantidad', 
+                color='Promoción', 
+                barmode='group',
+                facet_col='Carrera',
+                title='Estudiantes de Nuevo Ingreso que Solicitaron Repitencia o Año Cero')
+st.plotly_chart(fig05)
+
+######################################################################################################################
+st.write("Los estudiantes que piden Repitencia xq lo piden? Cuántas asignaturas suspendieron? Qué asignaturas son?")
+######################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ############
