@@ -12,10 +12,9 @@ st.title("Sigue el camino de Dante por el infierno...")
 ############
 #Repitencia
 ############
-st.write("### Segundo círculo (LUJURIA...SE EXITA POR EL APROBADO).")
-st.write("Este círculo esta reservado para las almas que son arrastradas eternamente por una tormenta violenta por pasar de año, simbolizando la pasió incontrolada por la carrera.")
+st.write("## Segundo círculo (LUJURIA...SE EXITA POR EL APROBADO).")
+st.write("### Este círculo esta reservado para las almas que son arrastradas eternamente por una tormenta violenta por pasar de año, simbolizando la pasión incontrolada por la carrera.")
 st.write("La cantidad de repitentes en un curso proviene del curso anterior.")
-
 
 ##############################################################
 repitentes = data[data['Situación académica'] == 'Repitente']
@@ -23,9 +22,9 @@ rep = repitentes.drop_duplicates(subset='Nombre y Apellidos')
 ##############################################################
 
 
-#####################################################################################################
-st.write("Cómo se han comportado los repitentes a partir del curso 2018-2019 hasta la actualidad?")
-######################################################################################################
+####################################################################################################
+st.write("### ¿Cómo se han comportado los repitentes desde curso 2018-2019 hasta el curso actual?")
+####################################################################################################
 rep_curso = rep.groupby('Curso').size().reset_index(name='Cantidad de repitentes')
 
 fig01 = px.bar(rep_curso, 
@@ -35,9 +34,9 @@ fig01 = px.bar(rep_curso,
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
 st.plotly_chart(fig01)
 
-##############################################################################################
-st.write("De qué carrera es que proceden los repitentes? Qué carrera tiene más repitentes?")
-################################################################################################
+####################################################################################################
+st.write(" ### ¿De qué carrera es que proceden los repitentes? ¿Qué carrera tiene más repitentes?")
+####################################################################################################
 rep_carrera = rep.groupby(['Curso', 'Carrera']).size().reset_index(name='Cantidad de repitentes')
 
 fig02 = px.bar(rep_carrera, 
@@ -49,10 +48,10 @@ fig02 = px.bar(rep_carrera,
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
 st.plotly_chart(fig02)
 
-########################################################################################
-st.write("Qué año cursan los estudiantes repitentes?")
+######################################################################################
+st.write("### ¿Qué año cursan los estudiantes repitentes?")
 st.write("Aclaración: La carrera de Ciencia de Datos comenzó en el curso 2023-2024.")
-#########################################################################################
+######################################################################################
 rep_ano = rep.groupby(['Curso', 'Carrera', 'Año']).size().reset_index(name='Cantidad de repitentes')
 
 curso_seleccionado = st.selectbox('Selecciona un Curso:', rep_ano['Curso'].unique())
@@ -72,26 +71,14 @@ fig03 = px.bar(df_filtrado,
     labels={'Cantidad de repitentes': 'Cantidad de Repitentes', 'Año': 'Año'})
 st.plotly_chart(fig03)
 
-
-##########################################################################################
-st.write("Por qué hay tantos repitentes de Ciencia de Datos? Motivos de la repitencia.")
-##########################################################################################
-
-
-
-
-
-
-
-#########################################################################################
-st.write("De los repitentes de 1er Año cuántos piden la Baja? Cuántos piden Reingreso?")
+################################################################################################
+st.write("### ¿De los repitentes de 1er Año cuántos piden la Baja? ¿Cuántos piden Reingreso?")
 st.write("Aclaraciones:")
 st.write("En 2018-2019 no se tienen datos de Promoción.")
 st.write("En 2021-2022 de los dos repitentes que había ninguno pidió la baja.")
 st.write("Explicar los tipos de Baja.")
-#########################################################################################
+################################################################################################
 repitentes_1ro = rep[rep['Año'] == '1ro']
-
 repitentes_1ro['Promoción'] = repitentes_1ro['Promoción'].fillna('')
 
 regex_baja_voluntaria = r'(BAJA|BV\s+\d{2}[./]\d{2}[./]\d{4}|\bB\. V\.\s*\d{2}[./]\d{2}[./]\d{4})'
@@ -141,12 +128,11 @@ fig04 = px.bar(
     labels={'Cantidad': 'Cantidad', 'Tipo de Solicitud': 'Tipo de Solicitud'})
 st.plotly_chart(fig04)
 
-
-#####################################################################################################################
-st.write("De los estudiantes de Nuevo Ingreso (Primer Año) cuántos piden piden Repitencia? Cuántos piden Año Cero?")
-st.write("Explicar la modalidad Año Cero (Comenzó en el curso 2019-2020).")
-st.write("La repitencia solo se puede pedir en segundo semestre.")
-#####################################################################################################################
+#########################################################################################################################
+st.write("### ¿Cuántos estudiantes de Nuevo Ingreso (Primer Año) piden Repitencia? ¿Cuántos piden Año Cero?")
+st.write("Explicar la modalidad Año Cero (Comenzó en el curso 2019-2020 y solo se puede pedir en el segundo semestre de primer año).")
+st.write("La repitencia solo se puede pedir en el segundo semestre de un curso y solo se puede repetir un año una sola vez.")
+#########################################################################################################################
 nuevo_ingreso = data[data["Situación académica"] == "Nuevo Ingreso"]
 new = nuevo_ingreso.drop_duplicates(subset=['Nombre y Apellidos', 'Curso', 'Carrera', 'Grupo', 'Semestre'])
 new['Promoción'] = new['Promoción'].apply(lambda x: 'Repitencia' if pd.notna(x) and re.search(r'(?i)^repite', x) else x)
@@ -162,19 +148,17 @@ fig05 = px.bar(conteo,
                 title='Estudiantes de Nuevo Ingreso que Solicitaron Repitencia o Año Cero')
 st.plotly_chart(fig05)
 
-######################################################################################################################
-st.write("Los estudiantes que piden Repitencia xq lo piden? Cuántas asignaturas suspendieron? Qué asignaturas son?")
-######################################################################################################################
+##########################################################################################################################
+st.write("### ¿Cuáles son los motivos de los estudiantes que piden Repitencia? ¿Qué asignaturas suspenden? ¿Cuáles son estas asignaturas?")
+##########################################################################################################################
 filtrado = new[new['Promoción'] == 'Repitencia']
 
-# Crear un DataFrame con las asignaturas desaprobadas
 asignaturas_desaprobadas = filtrado.melt(
     id_vars=['Carrera', 'Curso'],
     value_vars=['Desaprobadas Sem.1', 'Desaprobadas Sem.2'],
     var_name='Semestre',
     value_name='Asignaturas Desaprobadas')
 
-# Explode para separar las asignaturas en filas separadas
 asignaturas_desaprobadas = asignaturas_desaprobadas.dropna(subset=['Asignaturas Desaprobadas'])
 asignaturas_desaprobadas['Asignaturas Desaprobadas'] = asignaturas_desaprobadas['Asignaturas Desaprobadas'].str.split(',')
 asignaturas_desaprobadas = asignaturas_desaprobadas.explode('Asignaturas Desaprobadas')
@@ -192,20 +176,16 @@ fig_treemap = px.treemap(conteo_asignaturas,
 st.plotly_chart(fig_treemap)
 
 
-
-
-
-
-
-
-
-
-
-
-
 ############
 #Reingreso
 ############
 st.title("Dante se mantiene firme y encuentra otra puerta para regresar al infierno.")
 st.write("### Tercer círculo (GLOTONES...NO APRENDIERON LO SUFICIENTE Y VIENEN A POR MÁS).")
 st.write("Aquí se encuentra los que han sido azotados por una lluvia de suspensos pero siguen sonriendo pese al castigo impartido por el demonio Cerbero que no los deja superar logicamente las pruebas.")
+
+
+###########################################################################################################
+st.write("### ¿De los estudiantes que reingresan cuántos pasan para segundo?")
+st.write("Los reingresos son los que piden Año Cero y luego entran al curso siguiente en primer año.")
+###########################################################################################################
+
