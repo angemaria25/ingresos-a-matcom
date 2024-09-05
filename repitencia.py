@@ -14,7 +14,7 @@ st.title("Sigue el camino de Dante por el infierno...")
 ############
 st.write("## Segundo círculo (LUJURIA...SE EXITA POR EL APROBADO).")
 st.write("### Este círculo esta reservado para las almas que son arrastradas eternamente por una tormenta violenta por pasar de año, simbolizando la pasión incontrolada por la carrera.")
-st.write("La cantidad de repitentes en un curso proviene del curso anterior.")
+st.write("Aclaración: La cantidad de repitentes en un curso proviene del curso anterior.")
 
 ##############################################################
 repitentes = data[data['Situación académica'] == 'Repitente']
@@ -34,19 +34,63 @@ fig01 = px.bar(rep_curso,
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
 st.plotly_chart(fig01)
 
+#######################################################################################
+st.write("### ¿Cuál es el sexo predominante entre los estudiantes que repiten curso?")
+#######################################################################################
+# Crear una lista de carreras para el filtro, incluyendo una opción vacía
+carreras = [''] + rep['Carrera'].dropna().unique().tolist()
+carrera_seleccionada = st.selectbox('Selecciona una carrera:', options=carreras)
+
+# Filtrar los datos según la carrera seleccionada
+if carrera_seleccionada:
+    rep_filtrado = rep[rep['Carrera'] == carrera_seleccionada]
+else:
+    rep_filtrado = rep
+
+# Agrupar por curso y sexo
+rep_sexo_curso = rep_filtrado.groupby(['Curso', 'Sexo']).size().reset_index(name='Cantidad')
+
+# Calcular el total de repitentes por curso
+rep_sexo_curso['Total'] = rep_sexo_curso.groupby('Curso')['Cantidad'].transform('sum')
+
+# Calcular la proporción de cada sexo por curso
+rep_sexo_curso['Proporción'] = rep_sexo_curso['Cantidad'] / rep_sexo_curso['Total']
+
+# Crear el título del gráfico
+if carrera_seleccionada:
+    titulo_grafico = f'Proporción de Hembras y Varones por Curso - Carrera: {carrera_seleccionada}'
+else:
+    titulo_grafico = 'Proporción de Hembras y Varones por Curso'
+
+# Crear gráfico con Plotly
+fig02 = px.bar(
+    rep_sexo_curso,
+    x='Curso',
+    y='Proporción',
+    color='Sexo',
+    barmode='group',
+    title=titulo_grafico,
+    labels={'Proporción': 'Proporción de Repitentes', 'Curso': 'Curso'},
+    text='Proporción')
+fig02.update_layout(xaxis_title='Curso', yaxis_title='Proporción de Repitentes')
+fig02.update_traces(texttemplate='%{text:.2%}', textposition='outside')
+st.plotly_chart(fig02)
+
 ####################################################################################################
 st.write(" ### ¿De qué carrera es que proceden los repitentes? ¿Qué carrera tiene más repitentes?")
 ####################################################################################################
 rep_carrera = rep.groupby(['Curso', 'Carrera']).size().reset_index(name='Cantidad de repitentes')
+rep_carrera = rep_carrera.sort_values('Curso', ascending=False)
 
-fig02 = px.bar(rep_carrera, 
-            x='Curso', 
-            y='Cantidad de repitentes', 
+fig03 = px.bar(rep_carrera, 
+            y='Curso', 
+            x='Cantidad de repitentes', 
             color='Carrera',
             barmode='group',
+            orientation='h',
             title='Cantidad de Repitentes por Carrera', 
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
-st.plotly_chart(fig02)
+st.plotly_chart(fig03)
 
 ######################################################################################
 st.write("### ¿Qué año cursan los estudiantes repitentes?")
@@ -62,21 +106,20 @@ carreras_seleccionadas = st.multiselect('Selecciona una o más Carreras:', carre
 
 df_filtrado = df_filtrado[df_filtrado['Carrera'].isin(carreras_seleccionadas)]
 
-fig03 = px.bar(df_filtrado,
+fig04 = px.bar(df_filtrado,
     x='Año',
     y='Cantidad de repitentes',
     color='Carrera',
     barmode='group', 
     title=f'Cantidad de Repitentes por Año y Carrera para {curso_seleccionado}',
     labels={'Cantidad de repitentes': 'Cantidad de Repitentes', 'Año': 'Año'})
-st.plotly_chart(fig03)
+st.plotly_chart(fig04)
 
 ################################################################################################
 st.write("### ¿De los repitentes de 1er Año cuántos piden la Baja? ¿Cuántos piden Reingreso?")
 st.write("Aclaraciones:")
 st.write("En 2018-2019 no se tienen datos de Promoción.")
 st.write("En 2021-2022 de los dos repitentes que había ninguno pidió la baja.")
-st.write("Explicar los tipos de Baja.")
 ################################################################################################
 repitentes_1ro = rep[rep['Año'] == '1ro']
 repitentes_1ro['Promoción'] = repitentes_1ro['Promoción'].fillna('')
@@ -117,7 +160,7 @@ df_analisis_melted['Tipo de Solicitud'] = df_analisis_melted['Tipo de Solicitud'
     'Cantidad de Licencia de Matrícula': 'Licencia de Matrícula',
     'Cantidad de Reingreso': 'Reingreso'})
 
-fig04 = px.bar(
+fig05 = px.bar(
     df_analisis_melted,
     x='Curso',
     y='Cantidad',
@@ -126,12 +169,13 @@ fig04 = px.bar(
     barmode='group',
     title='Bajas y Reingresos de los Estudiantes Repitentes de Primer Año.',
     labels={'Cantidad': 'Cantidad', 'Tipo de Solicitud': 'Tipo de Solicitud'})
-st.plotly_chart(fig04)
+st.plotly_chart(fig05)
 
 #########################################################################################################################
 st.write("### ¿Cuántos estudiantes de Nuevo Ingreso (Primer Año) piden Repitencia? ¿Cuántos piden Año Cero?")
-st.write("Explicar la modalidad Año Cero (Comenzó en el curso 2019-2020 y solo se puede pedir en el segundo semestre de primer año).")
-st.write("La repitencia solo se puede pedir en el segundo semestre de un curso y solo se puede repetir un año una sola vez.")
+st.write("Aclaraciones:")
+st.write("La modalidad Año Cero comenzó en el curso 2019-2020 y solo se puede pedir en el segundo semestre de primer año.")
+st.write("La repitencia solo se puede pedir en el segundo semestre de un curso y solo se puede repetir un año de la carrera una sola vez.")
 #########################################################################################################################
 nuevo_ingreso = data[data["Situación académica"] == "Nuevo Ingreso"]
 new = nuevo_ingreso.drop_duplicates(subset=['Nombre y Apellidos', 'Curso', 'Carrera', 'Grupo', 'Semestre'])
@@ -139,14 +183,14 @@ new['Promoción'] = new['Promoción'].apply(lambda x: 'Repitencia' if pd.notna(x
 filtrado = new[new['Promoción'].isin(['Repitencia', 'Año Cero'])]
 conteo = filtrado.groupby(['Carrera', 'Curso', 'Promoción']).size().reset_index(name='Cantidad')
 
-fig05 = px.bar(conteo, 
+fig06 = px.bar(conteo, 
                 x='Curso', 
                 y='Cantidad', 
                 color='Promoción', 
                 barmode='group',
                 facet_col='Carrera',
                 title='Estudiantes de Nuevo Ingreso que Solicitaron Repitencia o Año Cero')
-st.plotly_chart(fig05)
+st.plotly_chart(fig06)
 
 ##########################################################################################################################
 st.write("### ¿Cuáles son los motivos de los estudiantes que piden Repitencia? ¿Qué asignaturas suspenden? ¿Cuáles son estas asignaturas?")
