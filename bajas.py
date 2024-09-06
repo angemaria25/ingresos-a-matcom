@@ -227,34 +227,37 @@ curso_seleccionado = st.selectbox('Selecciona un curso:', cursos, index=0)
 
 bajas_becados_curso = bajas_becados[bajas_becados['Curso'] == curso_seleccionado]
 
-fig = px.pie(
+fig15 = px.pie(
     bajas_becados_curso, 
     names='Provincia', 
     values='Porcentaje', 
     title=f'Porciento de Bajas de Estudiantes Becados por Provincia en el Curso {curso_seleccionado}',
     labels={'Provincia': 'Provincia', 'Porcentaje': 'Porcentaje de Estudiantes Becados'})
-st.plotly_chart(fig)
+st.plotly_chart(fig15)
 
 #########################################################################################################################
 st.write("### ¿La preparación en dependencia de la Vía de Ingreso puede afectar a que el estudiante se sienta en la necesidad de pedir de la baja?")
 ##########################################################################################################################
 bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
+total_bajas_por_curso = bajas_por_via.groupby('Curso')['Número de Bajas'].sum().reset_index(name='Total Bajas')
+bajas_por_via = bajas_por_via.merge(total_bajas_por_curso, on='Curso')
+bajas_por_via['Porcentaje de Bajas'] = (bajas_por_via['Número de Bajas'] / bajas_por_via['Total Bajas']) * 100
 
-fig15 = px.scatter(
+fig16 = px.scatter(
     bajas_por_via,
     x='Curso',
     y='Vía Ingreso',
-    size='Número de Bajas',
+    size='Porcentaje de Bajas',
     color='Vía Ingreso',
-    title='Bajas por Vía de Ingreso y Curso',
-    labels={'Número de Bajas': 'Número de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'},
+    title='Porciento de bajas por Vía de Ingreso y Curso',
+    labels={'Porcentaje de Bajas': 'Porcentaje de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'},
     size_max=60)
-fig15.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-fig15.update_layout(
+fig16.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig16.update_layout(
     xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
-        title=dict(text='Curso', font=dict(color='black')) 
+        title=dict(text='Curso', font=dict(color='black'))
     ),
     yaxis=dict(
         showgrid=False,
@@ -265,29 +268,35 @@ fig15.update_layout(
         font=dict(color='black')
     ),
     legend_title_text='Leyenda')
-st.plotly_chart(fig15)
+st.plotly_chart(fig16)
 
 ####################################
-#Distribución según el tipo de pre
+#Distribución según el tipo de pre.
 ####################################
 data_preuniversitario = bajas.dropna(subset=['Vía Ingreso'])
 data_preuniversitario = data_preuniversitario[data_preuniversitario['Vía Ingreso'].str.contains('INSTITUTOS PREUNIVERSITARIOS', na=False)]
+
 distribucion_pre = data_preuniversitario.groupby(['Curso', 'Tipo de Pre']).size().reset_index(name='Número de Estudiantes')
-        
-fig16 = px.bar(distribucion_pre, 
-                            y='Curso', 
-                            x='Número de Estudiantes', 
-                            color='Tipo de Pre', 
-                            barmode='stack',
-                            orientation='h',
-                            title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
-                            labels={'Número de Estudiantes':'Número de Estudiantes', 'Curso':'Curso'})
-fig16.update_traces(marker=dict(line=dict(color='#000000', width=1)))
-fig16.update_layout(
+
+total_estudiantes_por_curso = distribucion_pre.groupby('Curso')['Número de Estudiantes'].sum().reset_index(name='Total Estudiantes')
+
+distribucion_pre = distribucion_pre.merge(total_estudiantes_por_curso, on='Curso')
+distribucion_pre['Porcentaje de Estudiantes'] = (distribucion_pre['Número de Estudiantes'] / distribucion_pre['Total Estudiantes']) * 100
+
+fig17 = px.bar(distribucion_pre,
+                y='Curso',
+                x='Porcentaje de Estudiantes',
+                color='Tipo de Pre',
+                barmode='stack',
+                orientation='h',
+                title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
+                labels={'Porcentaje de Estudiantes': 'Porcentaje de Estudiantes', 'Curso': 'Curso'})
+fig17.update_traces(marker=dict(line=dict(color='#000000', width=1)))
+fig17.update_layout(
     xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
-        title=dict(text='Número de Estudiantes', font=dict(color='black')) 
+        title=dict(text='Porcentaje de Estudiantes', font=dict(color='black'))
     ),
     yaxis=dict(
         showgrid=False,
@@ -298,7 +307,7 @@ fig16.update_layout(
         font=dict(color='black')
     ),
     legend_title_text='Tipo de Pre')
-st.plotly_chart(fig16)
+st.plotly_chart(fig17)
 
 ####################################################################################################################
 st.write("### ¿En qué municipio se concentra la mayor cantidad de bajas de IPU según el tipo de preuniversitario?")
@@ -307,18 +316,26 @@ pre_normal = bajas[bajas["Tipo de Pre"] == "IPU"]
 a = pre_normal.groupby(["Municipio", "Curso"]).size().reset_index(name="Número de bajas")
 
 unique_municipios = a['Municipio'].unique()
+
+selected_municipios = st.multiselect('Seleccione una opción:', options=unique_municipios, placeholder='Seleccione los Municipios deseados')
+
+if not selected_municipios:
+    filtered_data = a
+else:
+    filtered_data = a[a['Municipio'].isin(selected_municipios)]
+    
 color_discrete_sequence = px.colors.qualitative.Dark24[:len(unique_municipios)]
 
-fig17 = px.scatter(a, 
-                x='Curso', 
-                y='Número de bajas', 
-                color='Municipio',
-                color_discrete_sequence=color_discrete_sequence,
-                category_orders={'Preuniversitario': ['A', 'B', 'C']},
-                title='Distribución de Estudiantes de Baja de IPU por municipio según los Tipos de Preuniversitarios')
-fig17.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-fig17.update_layout(barmode='stack',
-                    xaxis=dict(
+fig18 = px.scatter(filtered_data, 
+                    x='Curso', 
+                    y='Número de bajas', 
+                    color='Municipio',
+                    color_discrete_sequence=color_discrete_sequence,
+                    category_orders={'Curso': sorted(filtered_data['Curso'].unique())},
+                    title='Distribución de Estudiantes de Baja de IPU por Municipio según los Tipos de Preuniversitarios')
+fig18.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig18.update_layout(
+    xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
         title=dict(text='Curso', font=dict(color='black')) 
@@ -332,7 +349,7 @@ fig17.update_layout(barmode='stack',
         font=dict(color='black')
     ),
     legend_title_text='Municipios')
-st.plotly_chart(fig17)
+st.plotly_chart(fig18)
 
 ######################################################
 st.write("### Distribución de las Bajas por Carrera.")
@@ -361,7 +378,7 @@ for carrera, seleccionada in carreras_seleccionadas.items():
 bajas = bajas[bajas['Carrera'].isin(carreras_filtradas)]
 bajas_por_carrera_curso = bajas.groupby(['Carrera', 'Curso']).size().reset_index(name='Número de Bajas')
 
-fig18 = px.line(bajas_por_carrera_curso,
+fig19 = px.line(bajas_por_carrera_curso,
                 x='Curso',
                 y='Número de Bajas',
                 color='Carrera',
@@ -369,10 +386,10 @@ fig18 = px.line(bajas_por_carrera_curso,
                 labels={'Número de Bajas': 'Número de Bajas', 'Carrera': 'Carrera'},
                 markers=True,
                 color_discrete_map={'LIC. CIENCIAS DE LA COMPUTACION': 'blue', 'LIC. MATEMATICA': 'red'})
-fig18.update_traces(
+fig19.update_traces(
     line=dict(width=3.5),
     marker=dict(size=6, symbol='circle', line=dict(width=2, color='black'), color='black'))
-fig18.update_layout(
+fig19.update_layout(
     xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
@@ -387,7 +404,7 @@ fig18.update_layout(
         font=dict(color='black')
     ),
     legend_title_text='Carreras')
-st.plotly_chart(fig18)
+st.plotly_chart(fig19)
 
 ##############################################################
 st.write("### ¿De Matemática cuántas bajas son de varones??")
