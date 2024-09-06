@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-data = pd.read_json("./datos/data.json")
+data = pd.read_json("./data/data.json")
 
 #########################################################################################################################
 st.title("Primera Puerta al infierno de Dante.")

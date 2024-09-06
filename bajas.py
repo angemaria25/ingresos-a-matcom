@@ -3,7 +3,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
-data = pd.read_json("./datos/data.json")
+data = pd.read_json("./data/data.json")
 
 #########################################################################################################################
 st.title("Puerta de liberación inmediata.")
