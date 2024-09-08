@@ -156,41 +156,6 @@ fig05.update_layout(
     legend_title_text='Vía de Ingreso')
 st.plotly_chart(fig05)
 
-#################################
-#Distribución por tipo de pre.
-#################################
-st.write("modificar grafico")
-
-data_preuniversitario = data.dropna(subset=['Vía Ingreso'])
-
-data_preuniversitario = data_preuniversitario[data_preuniversitario['Vía Ingreso'].str.contains('INSTITUTOS PREUNIVERSITARIOS', na=False)]
-
-distribucion_pre = data_preuniversitario.groupby(['Curso', 'Tipo de Pre']).size().reset_index(name='Número de Estudiantes')
-        
-fig06 = px.line(distribucion_pre, 
-                            x='Curso', 
-                            y='Número de Estudiantes', 
-                            color='Tipo de Pre', 
-                            title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
-                            labels={'Número de Estudiantes':'Número de Estudiantes', 'Curso':'Curso'})
-fig06.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-fig06.update_layout(
-    xaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Curso', font=dict(color='black')) 
-    ),
-    yaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Número de Inscripciones', font=dict(color='black'))
-    ),
-    title=dict(
-        font=dict(color='black')
-    ),
-    legend_title_text='Tipo de Pre')
-st.plotly_chart(fig06)
-
 ###########################################
 st.write("### Vía de Ingreso por Carrera.")
 ###########################################
