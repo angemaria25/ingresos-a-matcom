@@ -239,63 +239,22 @@ with col2:
 ##############################################
 st.write("### Inscripciones por Provincia.")
 ##############################################
-# inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
-# unique_provincias = inscripciones_por_provincia['Provincia'].unique()
-# selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias,default=[], placeholder="Seleccione las Provincias deseadas")
-
-# if selected_provincias:
-#     filtered_data = inscripciones_por_provincia[inscripciones_por_provincia['Provincia'].isin(selected_provincias)]
-# else:
-#     filtered_data = inscripciones_por_provincia
-
-# fig09 = px.line(filtered_data, 
-#                 x='Curso', 
-#                 y='Número de Inscripciones', 
-#                 color='Provincia', 
-#                 markers=True, 
-#                 title='Inscripciones por Provincia',
-#                 labels={'Número de Inscripciones': 'Número de Inscripciones', 'Curso': 'Curso'})
-# fig09.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
-# fig09.update_layout(
-#     xaxis=dict(
-#         showgrid=False, 
-#         tickfont=dict(color='black'),
-#         title=dict(text='Curso', font=dict(color='black'))
-#     ),  
-#     yaxis=dict(
-#         showgrid=False, 
-#         tickfont=dict(color='black'),
-#         title=dict(text='Número de Inscripciones', font=dict(color='black'))
-#     ),
-#     title=dict(font=dict(color='black')),
-#     legend_title_text='Provincia')
-# st.plotly_chart(fig09)
-
-
-
-# Suponiendo que 'data' es tu DataFrame original
 inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
 
-# Ordenar los cursos
 inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
 inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
 
-# Obtener las provincias únicas
 unique_provincias = inscripciones_por_provincia['Provincia'].unique()
 
-# Selección de provincias
 selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
 
-# Filtrar datos según la selección de provincias
 if selected_provincias:
     filtered_data = inscripciones_por_provincia[inscripciones_por_provincia['Provincia'].isin(selected_provincias)]
 else:
     filtered_data = inscripciones_por_provincia
 
-# Crear un diccionario para asignar colores únicos a cada provincia
 color_map = {provincia: color for provincia, color in zip(unique_provincias, px.colors.qualitative.Plotly)}
 
-# Crear el gráfico
 fig09 = px.line(filtered_data, 
                 x='Curso', 
                 y='Número de Inscripciones', 
@@ -303,15 +262,14 @@ fig09 = px.line(filtered_data,
                 markers=True, 
                 title='Inscripciones por Provincia',
                 labels={'Número de Inscripciones': 'Número de Inscripciones', 'Curso': 'Curso'},
-                color_discrete_map=color_map)  # Asignar colores únicos
-
+                color_discrete_map=color_map) 
 fig09.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
 fig09.update_layout(
     xaxis=dict(
         showgrid=False, 
         tickfont=dict(color='black'),
         title=dict(text='Curso', font=dict(color='black')),
-        categoryorder='category ascending'  # Asegura que los cursos estén en orden ascendente
+        categoryorder='category ascending'  
     ),  
     yaxis=dict(
         showgrid=False, 
@@ -319,10 +277,9 @@ fig09.update_layout(
         title=dict(text='Número de Inscripciones', font=dict(color='black'))
     ),
     title=dict(font=dict(color='black')),
-    legend_title_text='Provincia'
+    legend_title_text='Provincias'
 )
 
-# Mostrar el gráfico en Streamlit
 st.plotly_chart(fig09)
 
 
