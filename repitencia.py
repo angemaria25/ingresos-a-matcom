@@ -32,37 +32,45 @@ fig01 = px.bar(rep_curso,
             y='Cantidad de repitentes', 
             title='Cantidad de Repitentes por Curso', 
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
+fig01.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig01.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Cantidad de repitentes', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ))
 st.plotly_chart(fig01)
 
 ###########################################################################################
 st.write("### ¿Cuál es el sexo predominante entre los estudiantes que han repiten curso?")
 ###########################################################################################
-# Crear una lista de carreras para el filtro, incluyendo una opción vacía
 carreras = [''] + rep['Carrera'].dropna().unique().tolist()
 carrera_seleccionada = st.selectbox('Selecciona una carrera:', options=carreras)
 
-# Filtrar los datos según la carrera seleccionada
 if carrera_seleccionada:
     rep_filtrado = rep[rep['Carrera'] == carrera_seleccionada]
 else:
     rep_filtrado = rep
 
-# Agrupar por curso y sexo
 rep_sexo_curso = rep_filtrado.groupby(['Curso', 'Sexo']).size().reset_index(name='Cantidad')
 
-# Calcular el total de repitentes por curso
 rep_sexo_curso['Total'] = rep_sexo_curso.groupby('Curso')['Cantidad'].transform('sum')
 
-# Calcular la proporción de cada sexo por curso
 rep_sexo_curso['Proporción'] = rep_sexo_curso['Cantidad'] / rep_sexo_curso['Total']
 
-# Crear el título del gráfico
 if carrera_seleccionada:
     titulo_grafico = f'Proporción de Hembras y Varones por Curso - Carrera: {carrera_seleccionada}'
 else:
     titulo_grafico = 'Proporción de Hembras y Varones por Curso'
 
-# Crear gráfico con Plotly
 fig02 = px.bar(
     rep_sexo_curso,
     x='Curso',
@@ -72,8 +80,22 @@ fig02 = px.bar(
     title=titulo_grafico,
     labels={'Proporción': 'Proporción de Repitentes', 'Curso': 'Curso'},
     text='Proporción')
-fig02.update_layout(xaxis_title='Curso', yaxis_title='Proporción de Repitentes')
-fig02.update_traces(texttemplate='%{text:.2%}', textposition='outside')
+fig02.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black'))
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Proporción de Repitentes', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Tipo de Pre')
+fig02.update_traces(texttemplate='%{text:.2%}', textposition='outside',marker=dict(line=dict(color='#000000', width=2)))
 st.plotly_chart(fig02)
 
 ##################################################################################
@@ -90,13 +112,28 @@ fig03 = px.bar(rep_carrera,
             orientation='h',
             title='Cantidad de Repitentes por Carrera', 
             labels={'Cantidad de repitentes':'Cantidad de Repitentes', 'Curso':'Curso'})
+fig03.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig03.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Cantidad de repitentes', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Carrera')
 st.plotly_chart(fig03)
 
 ######################################################################################
 st.write("### ¿En qué año académico están los estudiantes que han repetido curso?")
 st.write("Nota: La carrera de Ciencia de Datos comenzó en el curso 2023-2024.")
 ######################################################################################
-
 rep_ano = rep.groupby(['Curso', 'Carrera', 'Año']).size().reset_index(name='Cantidad de repitentes')
 
 curso_seleccionado = st.selectbox('Selecciona un Curso:', rep_ano['Curso'].unique())
@@ -114,6 +151,22 @@ fig04 = px.bar(df_filtrado,
     barmode='group', 
     title=f'Cantidad de Repitentes por Año y Carrera para {curso_seleccionado}',
     labels={'Cantidad de repitentes': 'Cantidad de Repitentes', 'Año': 'Año'})
+fig04.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig04.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Año', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Cantidad de repitentes', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Carrera')
 st.plotly_chart(fig04)
 
 ########################################################################################################################
@@ -170,6 +223,23 @@ fig05 = px.bar(
     barmode='group',
     title='Bajas y Reingresos de los Estudiantes Repitentes de Primer Año.',
     labels={'Cantidad': 'Cantidad', 'Tipo de Solicitud': 'Tipo de Solicitud'})
+
+fig05.for_each_xaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))))
+fig05.for_each_yaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black')))
+
+fig05.for_each_annotation(lambda a: a.update(text=a.text.split('=')[1], font=dict(color='black', size=12), bordercolor='black', borderwidth=2))
+
+fig05.update_yaxes(matches='y', showticklabels=True, title=dict(text='Cantidad', font=dict(color='black'), standoff=10))
+fig05.update_yaxes(showticklabels=False, title=None, row=1, col=2)
+fig05.update_yaxes(showticklabels=False, title=None, row=1, col=3)
+
+fig05.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig05.update_layout(
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Tipo de solicitud'
+)
 st.plotly_chart(fig05)
 
 #########################################################################################################################
@@ -191,6 +261,22 @@ fig06 = px.bar(conteo,
                 barmode='group',
                 facet_col='Carrera',
                 title='Estudiantes de Nuevo Ingreso que Solicitaron Repitencia o Año Cero')
+fig06.for_each_xaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))))
+fig06.for_each_yaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black')))
+
+fig06.for_each_annotation(lambda a: a.update(text=a.text.split('=')[1], font=dict(color='black', size=12), bordercolor='black', borderwidth=2))
+
+fig06.update_yaxes(matches='y', showticklabels=True, title=dict(text='Cantidad', font=dict(color='black'), standoff=10))
+fig06.update_yaxes(showticklabels=False, title=None, row=1, col=2)
+fig06.update_yaxes(showticklabels=False, title=None, row=1, col=3)
+
+fig06.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig06.update_layout(
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Promoción'
+)
 st.plotly_chart(fig06)
 
 ##########################################################################################################################
