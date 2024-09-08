@@ -220,17 +220,3 @@ fig_treemap = px.treemap(conteo_asignaturas,
                             title='Asignaturas Desaprobadas por Estudiantes que Solicitaron Repitencia según el Semestre')
 st.plotly_chart(fig_treemap)
 
-
-############
-#Reingreso
-############
-st.title("Dante se mantiene firme y encuentra otra puerta para regresar al infierno.")
-st.write("### Tercer círculo (GLOTONES...NO APRENDIERON LO SUFICIENTE Y VIENEN A POR MÁS).")
-st.write("Aquí se encuentra los que han sido azotados por una lluvia de suspensos pero siguen sonriendo pese al castigo impartido por el demonio Cerbero que no los deja superar logicamente las pruebas.")
-
-
-######################################################################################################################
-st.write("### ¿De los estudiantes que continuantes cuántos pasan para segundo?")
-st.write("Los continuantes son los estudiantes que pasan Año Cero y luego entran al curso siguiente en primer año.")
-#######################################################################################################################
-
