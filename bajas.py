@@ -238,50 +238,13 @@ st.plotly_chart(fig15)
 #########################################################################################################################
 st.write("### ¿La preparación en dependencia de la Vía de Ingreso puede afectar a que el estudiante se sienta en la necesidad de pedir de la baja?")
 ##########################################################################################################################
-# bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
-# total_bajas_por_curso = bajas_por_via.groupby('Curso')['Número de Bajas'].sum().reset_index(name='Total Bajas')
-# bajas_por_via = bajas_por_via.merge(total_bajas_por_curso, on='Curso')
-# bajas_por_via['Porcentaje de Bajas'] = (bajas_por_via['Número de Bajas'] / bajas_por_via['Total Bajas']) * 100
-
-# fig16 = px.scatter(
-#     bajas_por_via,
-#     x='Curso',
-#     y='Vía Ingreso',
-#     size='Porcentaje de Bajas',
-#     color='Vía Ingreso',
-#     title='Porciento de bajas por Vía de Ingreso y Curso',
-#     labels={'Porcentaje de Bajas': 'Porcentaje de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'},
-#     size_max=60)
-# fig16.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-# fig16.update_layout(
-#     xaxis=dict(
-#         showgrid=False,
-#         tickfont=dict(color='black'),
-#         title=dict(text='Curso', font=dict(color='black'))
-#     ),
-#     yaxis=dict(
-#         showgrid=False,
-#         tickfont=dict(color='black'),
-#         title=dict(text='Vía Ingreso', font=dict(color='black'))
-#     ),
-#     title=dict(
-#         font=dict(color='black')
-#     ),
-#     legend_title_text='Leyenda')
-# st.plotly_chart(fig16)
-
-
-
-# Agrupar los datos
 bajas_por_via = bajas.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Bajas')
 total_bajas_por_curso = bajas_por_via.groupby('Curso')['Número de Bajas'].sum().reset_index(name='Total Bajas')
 bajas_por_via = bajas_por_via.merge(total_bajas_por_curso, on='Curso')
 bajas_por_via['Porcentaje de Bajas'] = (bajas_por_via['Número de Bajas'] / bajas_por_via['Total Bajas']) * 100
 
-# Ordenar los cursos de forma ascendente
 bajas_por_via['Curso'] = pd.Categorical(bajas_por_via['Curso'], categories=sorted(bajas_por_via['Curso'].unique()), ordered=True)
 
-# Crear el gráfico de burbujas
 fig16 = px.scatter(
     bajas_por_via,
     x='Curso',
@@ -292,10 +255,8 @@ fig16 = px.scatter(
     labels={'Porcentaje de Bajas': 'Porcentaje de Bajas', 'Curso': 'Curso', 'Vía Ingreso': 'Vía de Ingreso'},
     size_max=60
 )
-
 fig16.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 
-# Ajustar los márgenes, tamaño del gráfico y eliminar el eje y
 fig16.update_layout(
     autosize=True,
     margin=dict(l=40, r=40, t=40, b=40),
@@ -303,7 +264,7 @@ fig16.update_layout(
         showgrid=False,
         tickfont=dict(color='black', size=12),
         title=dict(text='Curso', font=dict(color='black')),
-        type='category'  # Asegurarse de que el eje x es tratado como categoría
+        type='category' 
     ),
     yaxis=dict(
         showgrid=False,
@@ -316,16 +277,10 @@ fig16.update_layout(
     ),
     legend=dict(
         title=dict(text='Leyenda'),
-        font=dict(size=10)  # Reduce el tamaño de la fuente de la leyenda
+        font=dict(size=10)  
     )
 )
-
-# Mostrar el gráfico en Streamlit
 st.plotly_chart(fig16, use_container_width=True)
-
-
-
-
 
 ####################################
 #Distribución según el tipo de pre.
