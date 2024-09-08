@@ -136,7 +136,6 @@ inscripciones_por_via = data.groupby(['Curso', 'Vía Ingreso']).size().reset_ind
 unique_vias_ingreso = inscripciones_por_via['Vía Ingreso'].unique()
 selected_vias = st.multiselect('Selecciona una opción:', options=unique_vias_ingreso, placeholder="Seleccione las Vías de Ingreso deseadas")
     
-
 if selected_vias:
     filtered_data = inscripciones_por_via[inscripciones_por_via['Vía Ingreso'].isin(selected_vias)]
 else:
