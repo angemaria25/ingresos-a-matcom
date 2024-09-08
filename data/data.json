@@ -52027,7 +52027,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52049,7 +52049,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52071,7 +52071,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52093,7 +52093,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52104,7 +52104,7 @@
         "Municipio": null,
         "Mat": null,
         "Esp": null,
-        "Hist": null,
+        "Hist": null, 
         "Convocatoria": null,
         "Carrera": "LIC. CIENCIAS DE LA COMPUTACIÓN",
         "Curso": "2023-2024",
@@ -52115,7 +52115,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52137,7 +52137,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52159,7 +52159,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52181,7 +52181,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": null,
@@ -52203,117 +52203,7 @@
         "Índice Académico": null,
         "Escalafón": null,
         "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
-    },
-    {
-        "CI": null,
-        "Apellidos y Nombres": "JANIEL CASTELLANO CHACÓN",
-        "Sexo": "M",
-        "Preuniversitario": null,
-        "Provincia": "LA HABANA",
-        "Municipio": null,
-        "Mat": null,
-        "Esp": null,
-        "Hist": null,
-        "Convocatoria": null,
-        "Carrera": "LIC. MATEMÁTICA",
-        "Curso": "2023-2024",
-        "Estado": null,
-        "Situación académica": null,
-        "Tipo de estudiante": null,
-        "Tipo de Pre": null,
-        "Índice Académico": null,
-        "Escalafón": null,
-        "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
-    },
-    {
-        "CI": null,
-        "Apellidos y Nombres": "ALEXA YUDITH MARTÍNEZ HERRERA",
-        "Sexo": "F",
-        "Preuniversitario": null,
-        "Provincia": "LA HABANA",
-        "Municipio": null,
-        "Mat": null,
-        "Esp": null,
-        "Hist": null,
-        "Convocatoria": null,
-        "Carrera": "LIC. MATEMÁTICA",
-        "Curso": "2023-2024",
-        "Estado": null,
-        "Situación académica": null,
-        "Tipo de estudiante": null,
-        "Tipo de Pre": null,
-        "Índice Académico": null,
-        "Escalafón": null,
-        "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
-    },
-    {
-        "CI": null,
-        "Apellidos y Nombres": "MYLIN FELICIANO NUÑEZ",
-        "Sexo": "F",
-        "Preuniversitario": null,
-        "Provincia": "MAYABEQUE",
-        "Municipio": null,
-        "Mat": null,
-        "Esp": null,
-        "Hist": null,
-        "Convocatoria": null,
-        "Carrera": "LIC. MATEMÁTICA",
-        "Curso": "2023-2024",
-        "Estado": null,
-        "Situación académica": null,
-        "Tipo de estudiante": null,
-        "Tipo de Pre": null,
-        "Índice Académico": null,
-        "Escalafón": null,
-        "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
-    },
-    {
-        "CI": null,
-        "Apellidos y Nombres": "ANYELIN VICIEDO",
-        "Sexo": "F",
-        "Preuniversitario": null,
-        "Provincia": "MAYABEQUE",
-        "Municipio": null,
-        "Mat": null,
-        "Esp": null,
-        "Hist": null,
-        "Convocatoria": null,
-        "Carrera": "LIC. MATEMÁTICA",
-        "Curso": "2023-2024",
-        "Estado": null,
-        "Situación académica": null,
-        "Tipo de estudiante": null,
-        "Tipo de Pre": null,
-        "Índice Académico": null,
-        "Escalafón": null,
-        "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
-    },
-    {
-        "CI": null,
-        "Apellidos y Nombres": "DIXY BEATRIZ CAMEJO DONET",
-        "Sexo": "F",
-        "Preuniversitario": null,
-        "Provincia": "CAMAGUEY",
-        "Municipio": null,
-        "Mat": null,
-        "Esp": null,
-        "Hist": null,
-        "Convocatoria": null,
-        "Carrera": "LIC. MATEMÁTICA",
-        "Curso": "2023-2024",
-        "Estado": null,
-        "Situación académica": null,
-        "Tipo de estudiante": null,
-        "Tipo de Pre": null,
-        "Índice Académico": null,
-        "Escalafón": null,
-        "Valor Opción": null,
-        "Vía Ingreso": "Cadete"
+        "Vía Ingreso": "CADETES MINFAR"
     },
     {
         "CI": "04040560321",
