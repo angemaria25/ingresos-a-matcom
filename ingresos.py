@@ -102,19 +102,17 @@ st.plotly_chart(fig03)
 #########################################################################
 st.write("### Inscripciones por Carrera y Curso a lo Largo de los Años.")
 #########################################################################
-
 inscripciones_por_curso = data.groupby(['Curso', 'Carrera']).size().reset_index(name='Número de Inscripciones')
 inscripciones_por_curso = inscripciones_por_curso.sort_values('Curso', ascending=False)
 
 fig04 = px.bar(inscripciones_por_curso, 
-                y='Curso', 
-                x='Número de Inscripciones', 
-                color='Carrera',
-                barmode='group',
-                orientation='h',
-                labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
-
-fig04.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+               y='Curso', 
+               x='Número de Inscripciones', 
+               color='Carrera',
+               barmode='group',
+               orientation='h',
+               labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
+fig04.update_traces(marker=dict(line=dict(width=0)))  
 fig04.update_layout(
     title=dict(
         text="Inscripciones por Curso y Carrera", 
@@ -130,7 +128,9 @@ fig04.update_layout(
         tickfont=dict(color='black'),
         title=dict(text='Número de Inscripciones', font=dict(color='black'))
     ),
-    legend_title_text='Carreras'
+    legend_title_text='Carreras',
+    width=900,  
+    height=600  
 )
 st.plotly_chart(fig04)
 
