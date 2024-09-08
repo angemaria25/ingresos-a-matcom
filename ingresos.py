@@ -102,39 +102,10 @@ st.plotly_chart(fig03)
 #########################################################################
 st.write("### Inscripciones por Carrera y Curso a lo Largo de los Años.")
 #########################################################################
-# inscripciones_por_curso = data.groupby(['Curso', 'Carrera']).size().reset_index(name='Número de Inscripciones')
-# inscripciones_por_curso = inscripciones_por_curso.sort_values('Curso', ascending=False)
 
-# fig04 = px.bar(inscripciones_por_curso, 
-#                 y='Curso', 
-#                 x='Número de Inscripciones', 
-#                 color='Carrera',
-#                 barmode='group',
-#                 orientation='h',
-#                 labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
-# fig04.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-# fig04.update_layout(
-#     yaxis=dict(
-#         showgrid=False,
-#         tickfont=dict(color='black'),
-#         title=dict(text='Cursos', font=dict(color='black')) 
-#     ),
-#     xaxis=dict(
-#         showgrid=False,
-#         tickfont=dict(color='black'),
-#         title=dict(text='Número de Inscripciones', font=dict(color='black'))
-#     ),
-#     title=dict(
-#         font=dict(color='black')
-#     ),
-#     legend_title_text='Carreras')
-# st.plotly_chart(fig04)
-
-# Crear el DataFrame agrupado por curso y carrera
 inscripciones_por_curso = data.groupby(['Curso', 'Carrera']).size().reset_index(name='Número de Inscripciones')
 inscripciones_por_curso = inscripciones_por_curso.sort_values('Curso', ascending=False)
 
-# Crear el gráfico de barras
 fig04 = px.bar(inscripciones_por_curso, 
                 y='Curso', 
                 x='Número de Inscripciones', 
@@ -143,13 +114,10 @@ fig04 = px.bar(inscripciones_por_curso,
                 orientation='h',
                 labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
 
-# Ajustar trazas del gráfico
 fig04.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-
-# Actualizar el layout para personalizar el título y otros aspectos
 fig04.update_layout(
     title=dict(
-        text="Inscripciones por Curso y Carrera",  # Aquí defines el texto del título
+        text="Inscripciones por Curso y Carrera", 
         font=dict(color='black')
     ),
     yaxis=dict(
@@ -164,61 +132,48 @@ fig04.update_layout(
     ),
     legend_title_text='Carreras'
 )
-
-# Mostrar la gráfica en Streamlit
 st.plotly_chart(fig04)
 
 ################################################
 st.write("### Distribución por Vía de Ingreso")
 ################################################
-# inscripciones_por_via = data.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Inscripciones')
 
-# unique_vias_ingreso = inscripciones_por_via['Vía Ingreso'].unique()
-# selected_vias = st.multiselect('Selecciona una opción:', options=unique_vias_ingreso, placeholder="Seleccione las Vías de Ingreso deseadas")
-    
-# if selected_vias:
-#     filtered_data = inscripciones_por_via[inscripciones_por_via['Vía Ingreso'].isin(selected_vias)]
-# else:
-#     filtered_data = inscripciones_por_via  
-
-# fig05 = px.line(filtered_data, 
-#                 x='Curso', 
-#                 y='Número de Inscripciones', 
-#                 color='Vía Ingreso', 
-#                 markers=True, 
-#                 title='Inscripciones por Vía de Ingreso y Curso',
-#                 labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'})
-# fig05.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
-# fig05.update_layout(
-#     xaxis=dict(showgrid=False,tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))),
-#     yaxis=dict(showgrid=False, tickfont=dict(color='black'), title=dict(text='Número de Inscripciones', font=dict(color='black'))),
-#     title=dict(font=dict(color='black')),
-#     legend_title_text='Vía de Ingreso')
-# st.plotly_chart(fig05)
+df_grouped = data.groupby(["Curso", "Vía Ingreso"]).size().reset_index(name="Inscripciones")
 
 
-# Crear DataFrame
-df = pd.DataFrame(data)
+fig = px.bar(df_grouped, 
+             x="Curso", 
+             y="Inscripciones", 
+             color="Vía Ingreso", 
+             title="Inscripciones por Vía de Ingreso y Curso",
+             labels={'Inscripciones': 'Número de Inscripciones', 'Curso': 'Curso'},
+             barmode='stack',  
+             text_auto=True  
+            )
 
-# Contar la cantidad de inscripciones por vía de ingreso y curso
-df_grouped = df.groupby(["Curso", "Vía Ingreso"]).size().reset_index(name="Inscripciones")
-
-# Crear gráfica de áreas apiladas con Plotly
-fig = px.area(df_grouped, x="Curso", y="Inscripciones", color="Vía Ingreso", line_group="Vía Ingreso", markers=True)
-
-# Configurar diseño de la gráfica
 fig.update_layout(
-    title="Inscripciones por Vía de Ingreso y Curso",
-    xaxis_title="Curso",
-    yaxis_title="Número de Inscripciones",
+    yaxis=dict(
+        title="Número de Inscripciones",
+        range=[0, 250],  
+        dtick=20,       
+        showgrid=False,
+        tickfont=dict(color='black')
+    ),
+    xaxis=dict(
+        title="Curso",
+        showgrid=False,
+        tickfont=dict(color='black')
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
     legend_title="Vía de Ingreso",
-    width=1000,  # Cambiar el ancho
-    height=400   # Cambiar la altura (opcional)
+    width=1000,  
+    height=600   
 )
 
-# Mostrar gráfica en Streamlit
 st.title("Visualización de Ingresos por Vía de Ingreso")
-st.plotly_chart(fig, use_container_width=False)  # Elimina use_container_width para usar el ancho personalizado
+st.plotly_chart(fig, use_container_width=False)  
 
 ###########################################
 st.write("### Vía de Ingreso por Carrera.")
@@ -274,32 +229,25 @@ with col1:
 with col2:
     st.plotly_chart(fig08, use_container_width=True)  
 
+
+
 ##############################################
 st.write("### Inscripciones por Provincia.")
 ##############################################
 
 inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
-
-# Ordenar los cursos
 inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
 inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
-
-# Obtener las provincias únicas
 unique_provincias = inscripciones_por_provincia['Provincia'].unique()
 
-# Selección de provincias
 selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
-
-# Filtrar datos según la selección de provincias
 if selected_provincias:
     filtered_data = inscripciones_por_provincia[inscripciones_por_provincia['Provincia'].isin(selected_provincias)]
 else:
     filtered_data = inscripciones_por_provincia
 
-# Crear un diccionario para asignar colores únicos a cada provincia
 color_map = {provincia: color for provincia, color in zip(unique_provincias, px.colors.qualitative.Plotly)}
 
-# Crear el gráfico
 fig09 = px.line(filtered_data, 
                 x='Curso', 
                 y='Número de Inscripciones', 
@@ -307,30 +255,27 @@ fig09 = px.line(filtered_data,
                 markers=True, 
                 title='Inscripciones por Provincia',
                 labels={'Número de Inscripciones': 'Número de Inscripciones', 'Curso': 'Curso'},
-                color_discrete_map=color_map)  # Asignar colores únicos
+                color_discrete_map=color_map)  
 
-# Ajustar el formato de las líneas y los marcadores
 fig09.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
-
-# Actualizar layout con el rango y los ticks del eje y
 fig09.update_layout(
+    width=800,  
+    height=600,  
     xaxis=dict(
         showgrid=False, 
         tickfont=dict(color='black'),
         title=dict(text='Curso', font=dict(color='black')),
-        categoryorder='category ascending'  # Asegura que los cursos estén en orden ascendente
+        categoryorder='category ascending'  
     ),  
     yaxis=dict(
         showgrid=False, 
         tickfont=dict(color='black'),
         title=dict(text='Número de Inscripciones', font=dict(color='black')),
-        range=[0, 250],  # Limitar el rango del eje y de 0 a 20
-        dtick=25  # Incrementos en el eje y de 5 en 5
+        range=[0, 250], 
+        dtick=25  
     ),
     title=dict(font=dict(color='black')),
     legend_title_text='Provincia'
 )
 
-# Mostrar el gráfico en Streamlit
 st.plotly_chart(fig09)
-
