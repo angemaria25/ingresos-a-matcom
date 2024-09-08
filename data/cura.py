@@ -57,3 +57,31 @@ for item in data:
 
 with open('data1.json', 'w') as file:
     json.dump(data, file, ensure_ascii=False, indent=4)
+
+
+
+
+#########################################
+# Crear DataFrame
+df = pd.DataFrame(data)
+
+# Contar la cantidad de inscripciones por vía de ingreso y curso
+df_grouped = df.groupby(["Curso", "Vía Ingreso"]).size().reset_index(name="Inscripciones")
+
+# Crear gráfica de áreas apiladas con Plotly
+fig = px.area(df_grouped, x="Curso", y="Inscripciones", color="Vía Ingreso", line_group="Vía Ingreso", markers=True)
+
+# Configurar diseño de la gráfica
+fig.update_layout(
+    title="Inscripciones por Vía de Ingreso y Curso",
+    xaxis_title="Curso",
+    yaxis_title="Número de Inscripciones",
+    legend_title="Vía de Ingreso",
+    width=1000,  # Cambiar el ancho
+    height=400   # Cambiar la altura (opcional)
+)
+
+# Mostrar gráfica en Streamlit
+st.title("Visualización de Ingresos por Vía de Ingreso")
+st.plotly_chart(fig, use_container_width=False)  # Elimina use_container_width para usar el ancho personalizado
+

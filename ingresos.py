@@ -133,30 +133,54 @@ st.plotly_chart(fig04)
 ################################################
 st.write("### Distribución por Vía de Ingreso")
 ################################################
-inscripciones_por_via = data.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Inscripciones')
+# inscripciones_por_via = data.groupby(['Curso', 'Vía Ingreso']).size().reset_index(name='Número de Inscripciones')
 
-unique_vias_ingreso = inscripciones_por_via['Vía Ingreso'].unique()
-selected_vias = st.multiselect('Selecciona una opción:', options=unique_vias_ingreso, placeholder="Seleccione las Vías de Ingreso deseadas")
+# unique_vias_ingreso = inscripciones_por_via['Vía Ingreso'].unique()
+# selected_vias = st.multiselect('Selecciona una opción:', options=unique_vias_ingreso, placeholder="Seleccione las Vías de Ingreso deseadas")
     
-if selected_vias:
-    filtered_data = inscripciones_por_via[inscripciones_por_via['Vía Ingreso'].isin(selected_vias)]
-else:
-    filtered_data = inscripciones_por_via  
+# if selected_vias:
+#     filtered_data = inscripciones_por_via[inscripciones_por_via['Vía Ingreso'].isin(selected_vias)]
+# else:
+#     filtered_data = inscripciones_por_via  
 
-fig05 = px.line(filtered_data, 
-                x='Curso', 
-                y='Número de Inscripciones', 
-                color='Vía Ingreso', 
-                markers=True, 
-                title='Inscripciones por Vía de Ingreso y Curso',
-                labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'})
-fig05.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
-fig05.update_layout(
-    xaxis=dict(showgrid=False,tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))),
-    yaxis=dict(showgrid=False, tickfont=dict(color='black'), title=dict(text='Número de Inscripciones', font=dict(color='black'))),
-    title=dict(font=dict(color='black')),
-    legend_title_text='Vía de Ingreso')
-st.plotly_chart(fig05)
+# fig05 = px.line(filtered_data, 
+#                 x='Curso', 
+#                 y='Número de Inscripciones', 
+#                 color='Vía Ingreso', 
+#                 markers=True, 
+#                 title='Inscripciones por Vía de Ingreso y Curso',
+#                 labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'})
+# fig05.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
+# fig05.update_layout(
+#     xaxis=dict(showgrid=False,tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))),
+#     yaxis=dict(showgrid=False, tickfont=dict(color='black'), title=dict(text='Número de Inscripciones', font=dict(color='black'))),
+#     title=dict(font=dict(color='black')),
+#     legend_title_text='Vía de Ingreso')
+# st.plotly_chart(fig05)
+
+
+# Crear DataFrame
+df = pd.DataFrame(data)
+
+# Contar la cantidad de inscripciones por vía de ingreso y curso
+df_grouped = df.groupby(["Curso", "Vía Ingreso"]).size().reset_index(name="Inscripciones")
+
+# Crear gráfica de áreas apiladas con Plotly
+fig = px.area(df_grouped, x="Curso", y="Inscripciones", color="Vía Ingreso", line_group="Vía Ingreso", markers=True)
+
+# Configurar diseño de la gráfica
+fig.update_layout(
+    title="Inscripciones por Vía de Ingreso y Curso",
+    xaxis_title="Curso",
+    yaxis_title="Número de Inscripciones",
+    legend_title="Vía de Ingreso",
+    width=1000,  # Cambiar el ancho
+    height=400   # Cambiar la altura (opcional)
+)
+
+# Mostrar gráfica en Streamlit
+st.title("Visualización de Ingresos por Vía de Ingreso")
+st.plotly_chart(fig, use_container_width=False)  # Elimina use_container_width para usar el ancho personalizado
 
 ###########################################
 st.write("### Vía de Ingreso por Carrera.")
