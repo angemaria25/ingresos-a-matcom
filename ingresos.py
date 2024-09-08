@@ -234,7 +234,26 @@ with col2:
 ##############################################
 st.write("### Inscripciones por Provincia.")
 ##############################################
-<<<<<<< HEAD
+#<<<<<<< HEAD
+# inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
+
+# inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
+# inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
+
+# unique_provincias = inscripciones_por_provincia['Provincia'].unique()
+
+# selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
+
+# =======
+
+# inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
+# inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
+# inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
+# unique_provincias = inscripciones_por_provincia['Provincia'].unique()
+
+# selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
+# >>>>>>> 9bd76b62897288343eb263544df7a3783528b410
+# Código después de resolver el conflicto
 inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
 
 inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
@@ -244,15 +263,6 @@ unique_provincias = inscripciones_por_provincia['Provincia'].unique()
 
 selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
 
-=======
-
-inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
-inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
-inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
-unique_provincias = inscripciones_por_provincia['Provincia'].unique()
-
-selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
->>>>>>> 9bd76b62897288343eb263544df7a3783528b410
 if selected_provincias:
     filtered_data = inscripciones_por_provincia[inscripciones_por_provincia['Provincia'].isin(selected_provincias)]
 else:
@@ -267,12 +277,8 @@ fig09 = px.line(filtered_data,
                 markers=True, 
                 title='Inscripciones por Provincia',
                 labels={'Número de Inscripciones': 'Número de Inscripciones', 'Curso': 'Curso'},
-<<<<<<< HEAD
-                color_discrete_map=color_map) 
-=======
-                color_discrete_map=color_map)  
+                color_discrete_map=color_map)
 
->>>>>>> 9bd76b62897288343eb263544df7a3783528b410
 fig09.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
 fig09.update_layout(
     width=800,  
