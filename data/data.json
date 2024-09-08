@@ -4903,7 +4903,7 @@
         "Índice Académico": "99.77",
         "Escalafón": "92.14",
         "Valor Opción": "1",
-        "Vía Ingreso": "ATLETAS ACADEMIA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "91082929728",
@@ -4925,7 +4925,7 @@
         "Índice Académico": "99.58",
         "Escalafón": "97.54",
         "Valor Opción": "1",
-        "Vía Ingreso": "ATLETAS ACADEMIA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "90032328907",
@@ -5233,7 +5233,7 @@
         "Índice Académico": "100.00",
         "Escalafón": "97.75",
         "Valor Opción": "1",
-        "Vía Ingreso": "ATLETAS ACADEMIA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "88041908182",
@@ -5849,7 +5849,7 @@
         "Índice Académico": "97.90",
         "Escalafón": "74.20",
         "Valor Opción": "3",
-        "Vía Ingreso": "ATLETAS ACADEMIA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "90040326901",
@@ -5871,7 +5871,7 @@
         "Índice Académico": "96.49",
         "Escalafón": "87.75",
         "Valor Opción": "1",
-        "Vía Ingreso": "ATLETAS ACADEMIA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "90112004102",
@@ -5893,7 +5893,7 @@
         "Índice Académico": "99.70",
         "Escalafón": "97.60",
         "Valor Opción": "1",
-        "Vía Ingreso": "ATLETAS ACADEMIA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "92121427404",
@@ -9369,7 +9369,7 @@
         "Índice Académico": "97.81",
         "Escalafón": "89.41",
         "Valor Opción": "1",
-        "Vía Ingreso": "ACADEMIAS DEPORTIVAS DE ALTO RENDIMIENTO"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "91031027329",
@@ -42017,7 +42017,7 @@
         "Índice Académico": "97.28",
         "Escalafón": "91.8",
         "Valor Opción": "1",
-        "Vía Ingreso": "ACADEMIAS DEPORTIVAS DE ALTO RENDIMIENTO"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "02061475208",
@@ -48463,7 +48463,7 @@
         "Índice Académico": "89.16",
         "Escalafón": "49.75",
         "Valor Opción": "3",
-        "Vía Ingreso": "ESCUELAS DE INICIACION DEPORTIVA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "03031967283",
@@ -48485,7 +48485,7 @@
         "Índice Académico": "80.9",
         "Escalafón": "48.95",
         "Valor Opción": "6",
-        "Vía Ingreso": "ESCUELAS DE INICIACION DEPORTIVA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "03091769521",
@@ -48507,7 +48507,7 @@
         "Índice Académico": "83.83",
         "Escalafón": "57.09",
         "Valor Opción": "2",
-        "Vía Ingreso": "ESCUELAS DE INICIACION DEPORTIVA"
+        "Vía Ingreso": "ESCUELAS DEPORTIVAS"
     },
     {
         "CI": "03041068658",
@@ -48932,7 +48932,7 @@
         "Apellidos y Nombres": "PEREZ RODRIGUEZ JESSICA DE LA CANTIDAD",
         "Sexo": "F",
         "Preuniversitario": "IPVCE CARLOS MARX",
-        "Provincia": "MATANZA",
+        "Provincia": "MATANZAS",
         "Municipio": "CÁRDENAS",
         "Mat": "62",
         "Esp": "92",
@@ -52104,7 +52104,7 @@
         "Municipio": null,
         "Mat": null,
         "Esp": null,
-        "Hist": null, 
+        "Hist": null,
         "Convocatoria": null,
         "Carrera": "LIC. CIENCIAS DE LA COMPUTACIÓN",
         "Curso": "2023-2024",
