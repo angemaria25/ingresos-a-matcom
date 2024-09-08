@@ -24,13 +24,23 @@ fig01 = px.bar(inscripciones_por_curso,
                 labels={'Inscripciones':'Número de Inscripciones', 'Curso':'Curso'})
 fig01.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 fig01.update_layout(
-    xaxis=dict(showgrid=False),  
-    yaxis=dict(showgrid=False),
-    legend_title_text='Cursos')
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Inscripciones', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ))
 st.plotly_chart(fig01)
 
 ##########################################
-st.write("### Inscripciones por genero.")
+st.write("### Inscripciones por género.")
 ##########################################
 st.write("### Falta hacer la grafica para CD.")
 inscripciones_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Inscripciones')
@@ -45,9 +55,20 @@ fig02 = px.bar(inscripciones_por_genero,
                     color_discrete_map={'F': 'pink', 'M': 'blue'})
 fig02.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 fig02.update_layout(
-        xaxis=dict(showgrid=False),  
-        yaxis=dict(showgrid=False),
-        legend_title_text='Género')
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de Inscripciones', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Género')
 st.plotly_chart(fig02)
 
 inscripciones_por_genero_carrera = data.groupby(['Curso', 'Carrera', 'Sexo']).size().reset_index(name='Número de Inscripciones')
@@ -63,8 +84,19 @@ fig03 = px.bar(inscripciones_por_genero_carrera,
                 color_discrete_map={'F': 'pink', 'M': 'blue'})
 fig03.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 fig03.update_layout(
-    xaxis=dict(showgrid=False),  
-    yaxis=dict(showgrid=False),
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de Inscripciones', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
     legend_title_text='Género')
 st.plotly_chart(fig03)
 #########################################################################
@@ -79,7 +111,21 @@ fig04 = px.bar(inscripciones_por_curso,
                 orientation='h',
                 labels={'Número de Inscripciones':'Número de Inscripciones', 'Año':'Año'})
 fig04.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-fig04.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='Carreras:')
+fig04.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de Inscripciones', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Carreras')
 st.plotly_chart(fig04)
 
 ################################################
@@ -105,8 +151,8 @@ fig05 = px.line(filtered_data,
                 labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'})
 fig05.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
 fig05.update_layout(
-    xaxis=dict(showgrid=False, title=dict(text='Curso', font=dict(color='black'))),
-    yaxis=dict(showgrid=False, title=dict(text='Número de Inscripciones', font=dict(color='black'))),
+    xaxis=dict(showgrid=False,tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))),
+    yaxis=dict(showgrid=False, tickfont=dict(color='black'), title=dict(text='Número de Inscripciones', font=dict(color='black'))),
     title=dict(font=dict(color='black')),
     legend_title_text='Vía de Ingreso')
 st.plotly_chart(fig05)
@@ -129,7 +175,21 @@ fig06 = px.line(distribucion_pre,
                             title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
                             labels={'Número de Estudiantes':'Número de Estudiantes', 'Curso':'Curso'})
 fig06.update_traces(marker=dict(line=dict(color='#000000', width=2)))
-fig06.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False), legend_title_text='Tipo de Pre')
+fig06.update_layout(
+    xaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Curso', font=dict(color='black')) 
+    ),
+    yaxis=dict(
+        showgrid=False,
+        tickfont=dict(color='black'),
+        title=dict(text='Número de Inscripciones', font=dict(color='black'))
+    ),
+    title=dict(
+        font=dict(color='black')
+    ),
+    legend_title_text='Tipo de Pre')
 st.plotly_chart(fig06)
 
 ###########################################
@@ -209,10 +269,12 @@ fig09.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#00
 fig09.update_layout(
     xaxis=dict(
         showgrid=False, 
+        tickfont=dict(color='black'),
         title=dict(text='Curso', font=dict(color='black'))
     ),  
     yaxis=dict(
         showgrid=False, 
+        tickfont=dict(color='black'),
         title=dict(text='Número de Inscripciones', font=dict(color='black'))
     ),
     title=dict(font=dict(color='black')),
