@@ -70,24 +70,35 @@ fig02.update_layout(
     ),
     legend_title_text='Género')
 st.plotly_chart(fig02)
+##############################inscripciones por carreras#####################################
 
+# Agrupar los datos
 inscripciones_por_genero_carrera = data.groupby(['Curso', 'Carrera', 'Sexo']).size().reset_index(name='Número de Inscripciones')
 
+# Asegurarse de que los años o cursos estén ordenados correctamente como categorías
+inscripciones_por_genero_carrera['Curso'] = pd.Categorical(inscripciones_por_genero_carrera['Curso'],
+categories = sorted(inscripciones_por_genero_carrera['Curso'].unique()),ordered = True)
+
+# Crear la gráfica
 fig03 = px.bar(inscripciones_por_genero_carrera, 
-                x='Curso', 
-                y='Número de Inscripciones', 
-                color='Sexo', 
-                barmode='stack',
-                facet_col='Carrera',
-                title='Inscripciones por Género, Curso y Carrera.',
-                labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'},
-                color_discrete_map={'F': 'pink', 'M': 'blue'})
-fig03.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+               x ='Curso', 
+               y ='Número de Inscripciones', 
+               color ='Sexo', 
+               barmode ='stack',
+               facet_col ='Carrera',
+               title ='Inscripciones por Género, Curso y Carrera',
+               labels ={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'},
+               color_discrete_map = {'F': 'pink', 'M': 'blue'})
+
+# Mantener borde negro en las barras
+fig03.update_traces(marker = dict(line=dict(color='#000000', width = 1)))  # Ajusta el grosor del borde si es necesario
+
+# Ajustar el diseño de la gráfica, incluyendo altura y ancho
 fig03.update_layout(
-    xaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Curso', font=dict(color='black')) 
+    xaxis = dict(
+        showgrid = False,
+        tickfont = dict(color = 'black'),
+        title = dict(text='Curso', font=dict(color= 'black'))
     ),
     yaxis=dict(
         showgrid=False,
@@ -97,8 +108,15 @@ fig03.update_layout(
     title=dict(
         font=dict(color='black')
     ),
-    legend_title_text='Género')
+    legend_title_text='Género',
+    width=1000,  # Ancho ajustado
+    height=600   # Altura ajustada
+)
+
+# Mostrar la gráfica en Streamlit
 st.plotly_chart(fig03)
+
+
 #########################################################################
 st.write("### Inscripciones por Carrera y Curso a lo Largo de los Años.")
 #########################################################################
@@ -234,35 +252,13 @@ with col2:
 ##############################################
 st.write("### Inscripciones por Provincia.")
 ##############################################
-#<<<<<<< HEAD
-# inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
 
-# inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
-# inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
-
-# unique_provincias = inscripciones_por_provincia['Provincia'].unique()
-
-# selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
-
-# =======
-
-# inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
-# inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
-# inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
-# unique_provincias = inscripciones_por_provincia['Provincia'].unique()
-
-# selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
-# >>>>>>> 9bd76b62897288343eb263544df7a3783528b410
-# Código después de resolver el conflicto
 inscripciones_por_provincia = data.groupby(['Curso', 'Provincia']).size().reset_index(name='Número de Inscripciones')
-
 inscripciones_por_provincia['Curso'] = pd.Categorical(inscripciones_por_provincia['Curso'], categories=sorted(inscripciones_por_provincia['Curso'].unique()), ordered=True)
 inscripciones_por_provincia = inscripciones_por_provincia.sort_values('Curso')
-
 unique_provincias = inscripciones_por_provincia['Provincia'].unique()
 
 selected_provincias = st.multiselect('Selecciona la opción deseada:', options=unique_provincias, default=[], placeholder="Seleccione las Provincias deseadas")
-
 if selected_provincias:
     filtered_data = inscripciones_por_provincia[inscripciones_por_provincia['Provincia'].isin(selected_provincias)]
 else:
@@ -277,7 +273,7 @@ fig09 = px.line(filtered_data,
                 markers=True, 
                 title='Inscripciones por Provincia',
                 labels={'Número de Inscripciones': 'Número de Inscripciones', 'Curso': 'Curso'},
-                color_discrete_map=color_map)
+                color_discrete_map=color_map)  
 
 fig09.update_traces(line=dict(width=4), marker=dict(size=7, line=dict(color='#000000', width=2)))
 fig09.update_layout(
@@ -297,7 +293,7 @@ fig09.update_layout(
         dtick=25  
     ),
     title=dict(font=dict(color='black')),
-    legend_title_text='Provincias'
+    legend_title_text='Provincia'
 )
 
 st.plotly_chart(fig09)

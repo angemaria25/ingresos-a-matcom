@@ -413,12 +413,6 @@ fig19.update_layout(
 )
 st.plotly_chart(fig19)
 
-##############################################################
-st.write("### ¿De Matemática cuántas bajas son de varones??")
-##############################################################
-mat = bajas[bajas["Carrera"] == "LIC. MATEMÁTICA"]
-mates = mat.groupby(["Curso", "Sexo"]).size().reset_index(name='Número de bajas')
-st.write(mates)
 
 #############################################################################################
 st.write("### Comportamiento de las Bajas respecto a la cantidad de Ingresos en cada curso.")
