@@ -354,46 +354,52 @@ st.plotly_chart(fig18)
 ######################################################
 st.write("### Distribución de las Bajas por Carrera.")
 ######################################################
-cursos_disponibles = bajas['Curso'].unique()
+bajas['Curso'] = bajas['Curso'].fillna('Desconocido')
+bajas['Carrera'] = bajas['Carrera'].fillna('Desconocida')
+
+bajas = bajas[bajas['Carrera'] != 'Desconocida']
+
+cursos_disponibles = sorted(bajas['Curso'].unique(), key=lambda x: x.split('-')[0])
+
 cursos_select = st.select_slider(
     'Selecciona el rango de Cursos:',
-    options=sorted(cursos_disponibles),  
-    value=(min(cursos_disponibles), max(cursos_disponibles)))
+    options=cursos_disponibles,
+    value=(cursos_disponibles[0], cursos_disponibles[-1])
+)
 
-bajas = bajas[(bajas['Curso'] >= cursos_select[0]) & (bajas['Curso'] <= cursos_select[1])]
-carreras_disponibles = bajas['Carrera'].unique()
+bajas = bajas[bajas['Curso'].between(cursos_select[0], cursos_select[1])]
 
-carreras_seleccionadas = {}
+carreras_disponibles = sorted(bajas['Carrera'].unique())
 
-st.write('Carreras:')
-for carrera in sorted(carreras_disponibles):
-    carreras_seleccionadas[carrera] = st.checkbox(carrera, value=True)
+carreras_seleccionadas = {carrera: st.checkbox(carrera, value=True) for carrera in carreras_disponibles}
 
-carreras_filtradas = []
-
-for carrera, seleccionada in carreras_seleccionadas.items():
-    if seleccionada:
-        carreras_filtradas.append(carrera)
+carreras_filtradas = [carrera for carrera, seleccionada in carreras_seleccionadas.items() if seleccionada]
 
 bajas = bajas[bajas['Carrera'].isin(carreras_filtradas)]
+
 bajas_por_carrera_curso = bajas.groupby(['Carrera', 'Curso']).size().reset_index(name='Número de Bajas')
+
+bajas_por_carrera_curso['Curso'] = pd.Categorical(bajas_por_carrera_curso['Curso'], categories=cursos_disponibles, ordered=True)
+bajas_por_carrera_curso = bajas_por_carrera_curso.sort_values('Curso')
 
 fig19 = px.line(bajas_por_carrera_curso,
                 x='Curso',
                 y='Número de Bajas',
                 color='Carrera',
                 title='Número de Bajas por Carrera y Curso',
-                labels={'Número de Bajas': 'Número de Bajas', 'Carrera': 'Carrera'},
+                labels={'Número de Bajas': 'Número de Bajas', 'Curso': 'Curso'},
                 markers=True,
-                color_discrete_map={'LIC. CIENCIAS DE LA COMPUTACION': 'blue', 'LIC. MATEMATICA': 'red'})
+                color_discrete_map={carrera: px.colors.qualitative.Plotly[i % len(px.colors.qualitative.Plotly)]
+                                    for i, carrera in enumerate(bajas['Carrera'].unique())})
 fig19.update_traces(
     line=dict(width=3.5),
-    marker=dict(size=6, symbol='circle', line=dict(width=2, color='black'), color='black'))
+    marker=dict(size=7, symbol='circle', line=dict(width=3, color='black'))
+)
 fig19.update_layout(
     xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
-        title=dict(text='Curso', font=dict(color='black')) 
+        title=dict(text='Curso', font=dict(color='black'))
     ),
     yaxis=dict(
         showgrid=False,
@@ -403,7 +409,8 @@ fig19.update_layout(
     title=dict(
         font=dict(color='black')
     ),
-    legend_title_text='Carreras')
+    legend_title_text='Carreras'
+)
 st.plotly_chart(fig19)
 
 ##############################################################
