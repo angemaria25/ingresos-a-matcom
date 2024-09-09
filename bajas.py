@@ -131,8 +131,8 @@ if mostrar_grafico_hembras:
     fig13.update_traces(marker=dict(line=dict(color='#000000', width=2)))
     fig13.update_layout(
         autosize=False,
-        width=900,  
-        height=600,  
+        width=720,  
+        height=550,  
         margin=dict(l=100, r=40, t=50, b=40),
         xaxis=dict(
             showgrid=False,
@@ -246,7 +246,7 @@ st.plotly_chart(fig14)
 bajas_por_curso_tipo = bajas.groupby(['Curso', 'Provincia', 'Tipo de estudiante']).size().reset_index(name='Cantidad')
 total_bajas_por_curso_provincia = bajas_por_curso_tipo.groupby(['Curso', 'Provincia'])['Cantidad'].sum().reset_index(name='Total')
 bajas_por_curso_tipo = bajas_por_curso_tipo.merge(total_bajas_por_curso_provincia, on=['Curso', 'Provincia'])
-bajas_por_curso_tipo['Porcentaje'] = (bajas_por_curso_tipo['Cantidad'] / bajas_por_curso_tipo['Total']) * 100
+
 bajas_becados = bajas_por_curso_tipo[bajas_por_curso_tipo['Tipo de estudiante'] == 'Becado Nacional']
 
 cursos = bajas['Curso'].unique()
@@ -254,13 +254,24 @@ curso_seleccionado = st.selectbox('Selecciona un curso:', cursos, index=0)
 
 bajas_becados_curso = bajas_becados[bajas_becados['Curso'] == curso_seleccionado]
 
+total_bajas_por_provincia = bajas_por_curso_tipo[bajas_por_curso_tipo['Curso'] == curso_seleccionado].groupby('Provincia')['Cantidad'].sum().reset_index(name='Total Bajas')
+
+bajas_becados_curso = bajas_becados_curso.merge(total_bajas_por_provincia, on='Provincia')
+bajas_becados_curso['Porcentaje'] = (bajas_becados_curso['Cantidad'] / bajas_becados_curso['Total Bajas']) * 100
+
 fig15 = px.pie(
     bajas_becados_curso, 
     names='Provincia', 
     values='Porcentaje', 
     title=f'Porciento de Bajas de Estudiantes Becados por Provincia en el Curso {curso_seleccionado}',
-    labels={'Provincia': 'Provincia', 'Porcentaje': 'Porcentaje de Estudiantes Becados'})
+    labels={'Provincia': 'Provincia', 'Porcentaje': 'Porcentaje de Estudiantes Becados'}
+)
+fig15.update_traces(
+    textinfo='percent',
+    textfont=dict(size=14, color='black')  
+)
 st.plotly_chart(fig15)
+
 
 #########################################################################################################################
 st.write("### ¿La preparación en dependencia de la Vía de Ingreso puede afectar a que el estudiante se sienta en la necesidad de pedir de la baja?")
@@ -308,46 +319,6 @@ fig16.update_layout(
     )
 )
 st.plotly_chart(fig16, use_container_width=True)
-
-####################################
-#Distribución según el tipo de pre.
-####################################
-data_preuniversitario = bajas.dropna(subset=['Vía Ingreso'])
-data_preuniversitario = data_preuniversitario[data_preuniversitario['Vía Ingreso'].str.contains('INSTITUTOS PREUNIVERSITARIOS', na=False)]
-
-distribucion_pre = data_preuniversitario.groupby(['Curso', 'Tipo de Pre']).size().reset_index(name='Número de Estudiantes')
-
-total_estudiantes_por_curso = distribucion_pre.groupby('Curso')['Número de Estudiantes'].sum().reset_index(name='Total Estudiantes')
-
-distribucion_pre = distribucion_pre.merge(total_estudiantes_por_curso, on='Curso')
-distribucion_pre['Porcentaje de Estudiantes'] = (distribucion_pre['Número de Estudiantes'] / distribucion_pre['Total Estudiantes']) * 100
-
-fig17 = px.bar(distribucion_pre,
-                y='Curso',
-                x='Porcentaje de Estudiantes',
-                color='Tipo de Pre',
-                barmode='stack',
-                orientation='h',
-                title='Distribución de Estudiantes de Preuniversitario según el Tipo de Pre.',
-                labels={'Porcentaje de Estudiantes': 'Porcentaje de Estudiantes', 'Curso': 'Curso'})
-fig17.update_traces(marker=dict(line=dict(color='#000000', width=1)))
-fig17.update_layout(
-    xaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Porcentaje de Estudiantes', font=dict(color='black'))
-    ),
-    yaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Curso', font=dict(color='black'))
-    ),
-    title=dict(
-        font=dict(color='black')
-    ),
-    legend_title_text='Tipo de Pre')
-st.plotly_chart(fig17)
-
 ####################################################################################################################
 st.write("### ¿En qué municipio se concentra la mayor cantidad de bajas de IPU según el tipo de preuniversitario?")
 ####################################################################################################################
