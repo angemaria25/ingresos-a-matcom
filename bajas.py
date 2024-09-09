@@ -49,26 +49,31 @@ st.write("### ¿Cómo se comportan la cantidad de bajas respecto al sexo de los 
 ingresos_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Total Ingresos')
 bajas_por_genero = bajas.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Bajas')
 bajas_por_genero = bajas_por_genero.merge(ingresos_por_genero, on=['Curso', 'Sexo'])
-    
 bajas_por_genero['Porcentaje de Bajas'] = (bajas_por_genero['Número de Bajas'] / bajas_por_genero['Total Ingresos']) * 100
 bajas_por_genero = bajas_por_genero.sort_values('Curso', ascending=False)
 
-fig12 = px.bar(bajas_por_genero, 
-                y='Curso', 
-                x='Porcentaje de Bajas', 
-                color='Sexo', 
-                barmode='group',
-                orientation='h',
-                title='Porcentaje de Bajas por Sexo y Curso.',
-                labels={'Porcentaje de Bajas':'Porcentaje de Bajas (%)', 'Curso':'Curso'},
-                color_discrete_map={'F': 'red', 'M': 'blue'})
+fig12 = px.bar(
+    bajas_por_genero,
+    y='Curso',
+    x='Porcentaje de Bajas',
+    color='Sexo',
+    barmode='group',
+    orientation='h',
+    title='Porcentaje de Bajas por Sexo y Curso.',
+    labels={'Porcentaje de Bajas': 'Porcentaje de Bajas (%)', 'Curso': 'Curso'},
+    color_discrete_map={'F': 'red', 'M': 'blue'}
+)
 fig12.update_traces(marker=dict(line=dict(color='#000000', width=2)))
 
 fig12.update_layout(
+    autosize=False,
+    width=1200,  
+    height=700,  
+    margin=dict(l=100, r=40, t=50, b=40),
     xaxis=dict(
         showgrid=False,
         tickfont=dict(color='black'),
-        title=dict(text='Porcentaje de Bajas', font=dict(color='black')) 
+        title=dict(text='Porcentaje de Bajas', font=dict(color='black'))
     ),
     yaxis=dict(
         showgrid=False,
@@ -78,8 +83,13 @@ fig12.update_layout(
     title=dict(
         font=dict(color='black')
     ),
-    legend_title_text='Género')
-st.plotly_chart(fig12)
+    legend=dict(
+        title=dict(text='Género'),
+        font=dict(size=12)  
+    )
+)
+st.plotly_chart(fig12, use_container_width=True)
+
 
 #####################################################################################################################
 st.write("### ¿El sexo femenino es el que más tiende a pedir la baja? ¿Cómo se comporta este fenómeno por carreras? ")
@@ -88,45 +98,62 @@ mostrar_grafico_hembras = st.checkbox('Análisis de las Bajas del sexo Femenino 
 
 if mostrar_grafico_hembras:
     bajas_hembras_curso = bajas_por_genero[bajas_por_genero['Sexo'] == 'F'].copy()
-
+    
     bajas_hembras = bajas[bajas['Sexo'] == 'F']
     bajas_por_carrera_curso = bajas_hembras.groupby(['Curso', 'Carrera']).size().reset_index(name='Número de Bajas Carrera')
-
+    
     bajas_totales_por_curso = bajas_hembras.groupby('Curso').size().reset_index(name='Total Bajas Curso')
-
+    
     bajas_hembras_curso = bajas_hembras_curso.merge(bajas_por_carrera_curso, on='Curso')
-
     bajas_hembras_curso = bajas_hembras_curso.merge(bajas_totales_por_curso, on='Curso')
-
-    bajas_hembras_curso['Porcentaje de Bajas Carrera'] = (bajas_hembras_curso['Número de Bajas Carrera'] / bajas_hembras_curso['Total Bajas Curso']) * bajas_hembras_curso['Porcentaje de Bajas']
-
-    fig13 = px.bar(bajas_hembras_curso, 
-                            y='Curso', 
-                            x='Porcentaje de Bajas Carrera', 
-                            color='Carrera',
-                            barmode='group',
-                            orientation='h',
-                            title='Porcentaje de Hembras que solicitan la baja en cada Curso.',
-                            labels={'Porcentaje de Bajas Carrera': 'Porcentaje de Bajas (%)', 'Curso': 'Curso', 'Carrera': 'Carrera'},
-                            color_discrete_map={'LIC. MATEMÁTICA': 'red',    'LIC. CIENCIAS DE LA COMPUTACIÓN': 'lightcoral'})
+    
+    bajas_hembras_curso['Porcentaje de Bajas Carrera'] = (bajas_hembras_curso['Número de Bajas Carrera'] / bajas_hembras_curso['Total Bajas Curso']) * 100
+    
+    cursos_ordenados = sorted(bajas_hembras_curso['Curso'].unique(), key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))
+    
+    carreras = bajas_hembras_curso['Carrera'].unique()
+    colores = px.colors.qualitative.Plotly  
+    color_discrete_map = {carrera: colores[i % len(colores)] for i, carrera in enumerate(carreras)}
+    
+    fig13 = px.bar(
+        bajas_hembras_curso, 
+        y='Curso', 
+        x='Porcentaje de Bajas Carrera', 
+        color='Carrera',
+        barmode='group',
+        orientation='h',
+        title='Porcentaje de Hembras que solicitan la baja en cada Curso.',
+        labels={'Porcentaje de Bajas Carrera': 'Porcentaje de Bajas (%)', 'Curso': 'Curso', 'Carrera': 'Carrera'},
+        color_discrete_map=color_discrete_map,
+        category_orders={'Curso': cursos_ordenados}
+    )
+    
     fig13.update_traces(marker=dict(line=dict(color='#000000', width=2)))
     fig13.update_layout(
-    xaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Porcentaje de Bajas', font=dict(color='black')) 
-    ),
-    yaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Curso', font=dict(color='black'))
-    ),
-    title=dict(
-        font=dict(color='black')
-    ),
-    legend_title_text='Carrera')
-    st.plotly_chart(fig13)
-    
+        autosize=False,
+        width=900,  
+        height=600,  
+        margin=dict(l=100, r=40, t=50, b=40),
+        xaxis=dict(
+            showgrid=False,
+            tickfont=dict(color='black', size=12),
+            title=dict(text='Porcentaje de Bajas', font=dict(color='black')) 
+        ),
+        yaxis=dict(
+            showgrid=False,
+            tickfont=dict(color='black', size=12),
+            title=dict(text='Curso', font=dict(color='black'))
+        ),
+        title=dict(
+            font=dict(color='black')
+        ),
+        legend=dict(
+            title=dict(text='Carrera'),
+            font=dict(size=12)  
+        )
+    )
+    st.plotly_chart(fig13, use_container_width=True)
+
 ###########################################################################################
 st.write("### ¿De que Provincias provienen los estudiantes que mayormente piden la baja?")
 ###########################################################################################
@@ -345,7 +372,7 @@ fig18 = px.scatter(filtered_data,
                     color_discrete_sequence=color_discrete_sequence,
                     category_orders={'Curso': sorted(filtered_data['Curso'].unique())},
                     title='Distribución de Estudiantes de Baja de IPU por Municipio según los Tipos de Preuniversitarios')
-fig18.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+fig18.update_traces(marker=dict(line=dict(color='#000000', width=1)))
 fig18.update_layout(
     xaxis=dict(
         showgrid=False,
@@ -362,6 +389,7 @@ fig18.update_layout(
     ),
     legend_title_text='Municipios')
 st.plotly_chart(fig18)
+
 
 ######################################################
 st.write("### Distribución de las Bajas por Carrera.")
