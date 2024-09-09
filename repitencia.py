@@ -14,7 +14,7 @@ st.title("Sigue el camino de Dante por el infierno...")
 ############
 st.write("## Segundo círculo (LUJURIA...SE EXITA POR EL APROBADO).")
 st.write("### Este círculo esta reservado para las almas que son arrastradas eternamente por una tormenta violenta por pasar de año, simbolizando la pasión incontrolada por la carrera.")
-st.write("Aclaración: La cantidad de repitentes en un curso proviene del curso anterior.")
+
 
 ##############################################################
 repitentes = data[data['Situación académica'] == 'Repitente']

@@ -42,7 +42,6 @@ st.plotly_chart(fig01)
 ##########################################
 st.write("### Inscripciones por género.")
 ##########################################
-st.write("### Falta hacer la grafica para CD.")
 inscripciones_por_genero = data.groupby(['Curso', 'Sexo']).size().reset_index(name='Número de Inscripciones')
 
 fig02 = px.bar(inscripciones_por_genero, 
@@ -78,33 +77,31 @@ inscripciones_por_genero_carrera['Curso'] = pd.Categorical(inscripciones_por_gen
 categories = sorted(inscripciones_por_genero_carrera['Curso'].unique()),ordered = True)
 
 fig03 = px.bar(inscripciones_por_genero_carrera, 
-                x ='Curso', 
-                y ='Número de Inscripciones', 
-                color ='Sexo', 
-                barmode ='stack',
-                facet_col ='Carrera',
-                title ='Inscripciones por Género, Curso y Carrera',
-                labels ={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'},
-                color_discrete_map = {'F': 'pink', 'M': 'blue'})
-fig03.update_traces(marker = dict(line=dict(color='#000000', width = 1)))  
+                x='Curso', 
+                y='Número de Inscripciones', 
+                color='Sexo', 
+                barmode='stack',
+                facet_col='Carrera',
+                title='Inscripciones por Género, Curso y Carrera',
+                labels={'Número de Inscripciones':'Número de Inscripciones', 'Curso':'Curso'},
+                color_discrete_map={'F': 'pink', 'M': 'blue'})
+fig03.update_traces(marker=dict(line=dict(color='#000000', width=1)))
+
+fig03.for_each_xaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))))
+fig03.for_each_yaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black')))
+
+fig03.for_each_annotation(lambda a: a.update(text=a.text.split('=')[1], font=dict(color='black', size=12), bordercolor='black', borderwidth=2))
+
 fig03.update_layout(
-    xaxis = dict(
-        showgrid = False,
-        tickfont = dict(color = 'black'),
-        title = dict(text='Curso', font=dict(color= 'black'))
-    ),
-    yaxis=dict(
-        showgrid=False,
-        tickfont=dict(color='black'),
-        title=dict(text='Número de Inscripciones', font=dict(color='black'))
-    ),
     title=dict(
+        text='Inscripciones por Género, Curso y Carrera',
         font=dict(color='black')
     ),
     legend_title_text='Género',
     width=1000,  
-    height=600   
-)
+    height=600,
+    xaxis_title=dict(text='Curso', font=dict(color='black')),
+    yaxis_title=dict(text='Número de Inscripciones', font=dict(color='black')))
 st.plotly_chart(fig03)
 
 #########################################################################
@@ -230,7 +227,6 @@ with col1:
 
 with col2:
     st.plotly_chart(fig08, use_container_width=True)  
-
 
 ##############################################
 st.write("### Inscripciones por Provincia.")
