@@ -182,6 +182,7 @@ regex_baja_voluntaria = r'(BAJA|BV\s+\d{2}[./]\d{2}[./]\d{4}|\bB\. V\.\s*\d{2}[.
 regex_bajas_desercion = r'(BD\s+\d{2}[./]\d{2}[./]\d{4}|\bB\. D\.\s*\d{2}[./]\d{2}[./]\d{4})'
 regex_baja_insuficiencia = r'(BID\s+\d{2}[./]\d{2}[./]\d{4})'
 regex_licencia_matricula = r'(LM\s+\d{2}[./]\d{2}[./]\d{4})'
+regex_reingresos = r'(REINGRESO|Reingreso|Reingresa)'
 
 baja_voluntaria = repitentes_1ro[repitentes_1ro['Promoción'].str.contains(regex_baja_voluntaria, case=False, regex=True)]
 baja_voluntaria = baja_voluntaria.groupby(['Curso', 'Carrera']).size().reset_index(name='Cantidad de Baja Voluntaria')
@@ -195,11 +196,14 @@ baja_insuficiencia = baja_insuficiencia.groupby(['Curso', 'Carrera']).size().res
 licencia_matricula = repitentes_1ro[repitentes_1ro['Promoción'].str.contains(regex_licencia_matricula, case=False, regex=True)]
 licencia_matricula = licencia_matricula.groupby(['Curso', 'Carrera']).size().reset_index(name='Cantidad de Licencia de Matrícula')
 
-regex_reingresos = r'(REINGRESO|Reingreso|Reingresa)'
 reingresos = repitentes_1ro[repitentes_1ro['Promoción'].str.contains(regex_reingresos, case=False, regex=True)]
 reingresos = reingresos.groupby(['Curso', 'Carrera']).size().reset_index(name='Cantidad de Reingreso')
 
-bajas_df = pd.concat([baja_voluntaria, bajas_desercion, baja_insuficiencia, licencia_matricula], ignore_index=True)
+bajas_df = pd.merge(baja_voluntaria, bajas_desercion, on=['Curso', 'Carrera'], how='outer', suffixes=('_bv', '_bd'))
+bajas_df = pd.merge(bajas_df, baja_insuficiencia, on=['Curso', 'Carrera'], how='outer')
+bajas_df = pd.merge(bajas_df, licencia_matricula, on=['Curso', 'Carrera'], how='outer')
+bajas_df = bajas_df.fillna(0)
+
 df_analisis = pd.merge(bajas_df, reingresos, on=['Curso', 'Carrera'], how='outer').fillna(0)
 
 df_analisis_melted = df_analisis.melt(id_vars=['Curso', 'Carrera'], 
@@ -223,22 +227,22 @@ fig05 = px.bar(
     barmode='group',
     title='Bajas y Reingresos de los Estudiantes Repitentes de Primer Año.',
     labels={'Cantidad': 'Cantidad', 'Tipo de Solicitud': 'Tipo de Solicitud'})
-
 fig05.for_each_xaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black'), title=dict(text='Curso', font=dict(color='black'))))
 fig05.for_each_yaxis(lambda axis: axis.update(showgrid=False, tickfont=dict(color='black')))
 
 fig05.for_each_annotation(lambda a: a.update(text=a.text.split('=')[1], font=dict(color='black', size=12), bordercolor='black', borderwidth=2))
 
-fig05.update_yaxes(matches='y', showticklabels=True, title=dict(text='Cantidad', font=dict(color='black'), standoff=10))
-fig05.update_yaxes(showticklabels=False, title=None, row=1, col=2)
-fig05.update_yaxes(showticklabels=False, title=None, row=1, col=3)
+fig05.update_yaxes(title=dict(text='Cantidad', font=dict(color='black')), row=1, col=1)
+fig05.update_yaxes(title=None, row=1, col=2)
+fig05.update_yaxes(title=None, row=1, col=3)
 
 fig05.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+
 fig05.update_layout(
     title=dict(
         font=dict(color='black')
     ),
-    legend_title_text='Tipo de solicitud'
+    legend_title_text='Tipo de Solicitud'
 )
 st.plotly_chart(fig05)
 

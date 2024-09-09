@@ -257,18 +257,35 @@ bajas_becados_curso = bajas_becados[bajas_becados['Curso'] == curso_seleccionado
 total_bajas_por_provincia = bajas_por_curso_tipo[bajas_por_curso_tipo['Curso'] == curso_seleccionado].groupby('Provincia')['Cantidad'].sum().reset_index(name='Total Bajas')
 
 bajas_becados_curso = bajas_becados_curso.merge(total_bajas_por_provincia, on='Provincia')
+
 bajas_becados_curso['Porcentaje'] = (bajas_becados_curso['Cantidad'] / bajas_becados_curso['Total Bajas']) * 100
 
-fig15 = px.pie(
+fig15 = px.bar(
     bajas_becados_curso, 
-    names='Provincia', 
-    values='Porcentaje', 
-    title=f'Porciento de Bajas de Estudiantes Becados por Provincia en el Curso {curso_seleccionado}',
-    labels={'Provincia': 'Provincia', 'Porcentaje': 'Porcentaje de Estudiantes Becados'}
-)
-fig15.update_traces(
-    textinfo='percent',
-    textfont=dict(size=14, color='black')  
+    x='Provincia', 
+    y='Porcentaje', 
+    title=f'Porcentaje de Bajas de Estudiantes Becados por Provincia en el Curso {curso_seleccionado}',
+    color='Provincia',  
+    color_discrete_sequence=px.colors.qualitative.Plotly  )
+
+fig15.update_layout(
+    xaxis_title='Provincia',
+    yaxis_title='Porcentaje',
+    xaxis=dict(
+        tickfont=dict(color='black'),  
+        titlefont=dict(color='black'),  
+        showgrid=False,  
+        zeroline=False  
+    ),
+    yaxis=dict(
+        tickfont=dict(color='black'),  
+        titlefont=dict(color='black'),  
+        showgrid=False, 
+        zeroline=False  
+    ),
+    plot_bgcolor='white',  
+    paper_bgcolor='white',  
+    legend_title=dict(text='Provincias')  
 )
 st.plotly_chart(fig15)
 
